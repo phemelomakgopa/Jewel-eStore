@@ -1,11 +1,13 @@
+# === Root Directory ===
+
 # Node modules
 node_modules/
 
-# Environment variables
-.env
-
 # Firebase service key
 serviceAccountKey.json
+
+# Environment variables
+.env
 
 # Logs
 logs
@@ -21,3 +23,24 @@ Thumbs.db
 .idea/
 *.sublime-workspace
 *.sublime-project
+
+# === React Client Directory ===
+
+# React build output
+client/build/
+
+# Client node_modules (optional, in case someone runs npm install inside client manually)
+client/node_modules/
+
+# React environment files
+client/.env.local
+client/.env.development.local
+client/.env.test.local
+client/.env.production.local
+
+# Testing coverage reports
+client/coverage/
+
+# Misc
+client/.DS_Store
+client/npm-debug.log*
