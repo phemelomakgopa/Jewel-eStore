@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="admin.css" />
+  <!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore-compat.js"></script>
+
+<script>
+  // Your Firebase config (replace with yours from Firebase console)
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "your-project-id.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-project-id.appspot.com",
+    messagingSenderId: "SENDER_ID",
+    appId: "APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>
+  <script defer src="admin.js"></script>
+</head>
+<body>
+  <div id="login-screen" class="screen">
+    <h1>Admin Login</h1>
+    <input type="password" id="admin-password" placeholder="Enter admin password" />
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div id="dashboard" class="container hidden">
+    <h1 class="dashboard-title">Admin Dashboard</h1>
+    <div class="tab-buttons">
+      <button class="tab-btn active" data-tab="products">🛍 Products</button>
+      <button class="tab-btn" data-tab="orders">📦 Orders</button>
+    </div>
+
+    <!-- Products Tab -->
+    <div id="products" class="tab-content active">
+      <h2>Manage Products</h2>
+      <form id="product-form">
+        <input type="text" placeholder="Product Name" id="product-name" required />
+        <input type="text" placeholder="Description" id="product-desc" required />
+        <input type="file" id="product-images" multiple />
+        <button type="submit">Add Product</button>
+      </form>
+
+      <ul id="product-list"></ul>
+    </div>
+
+    <!-- Orders Tab -->
+    <div id="orders" class="tab-content">
+      <h2>Customer Orders</h2>
+      <select id="order-filter">
+        <option value="all">All</option>
+        <option value="pending">Pending</option>
+        <option value="shipped">Shipped</option>
+        <option value="cancelled">Cancelled</option>
+        <option value="completed">Completed</option>
+      </select>
+
+      <ul id="order-list">
+        <!-- Sample Order -->
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
