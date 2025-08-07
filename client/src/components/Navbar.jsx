@@ -1,29 +1,43 @@
-import { FaShoppingCart, FaUser } from "react-icons/fa";
+import React from 'react';
+import styles from './Navbar.module.css'; // Import the CSS Module
 
-function Navbar() {
+const Navbar = () => {
   return (
-    <nav className="bg-white/60 backdrop-blur-md shadow-md py-4 px-8 flex justify-between items-center font-serif sticky top-0 z-50">
-      {/* Logo */}
-      <h1 className="text-2xl font-bold italic text-[#1a1a1a] drop-shadow-sm animate-fade-in">
-        Jewel Store.
-      </h1>
+    <nav className={styles.navbar}>
+      <div className={styles.navbarContainer}>
+        {/* Logo/Brand Name */}
+        <div className={styles.logo}>
+          Jewel Store
+        </div>
 
-      {/* Links */}
-      <ul className="hidden md:flex space-x-10 text-lg text-[#1a1a1a]">
-        <li className="hover:underline cursor-pointer transition duration-300">Home</li>
-        <li className="hover:underline cursor-pointer transition duration-300">About</li>
-        <li className="hover:underline cursor-pointer transition duration-300">Products</li>
-        <li className="hover:underline cursor-pointer transition duration-300">Contact</li>
-      </ul>
+        {/* Navigation Links (Desktop) */}
+        <div className={styles.navLinksDesktop}>
+          <a href="/" className={styles.navLink}>Home</a>
+          <a href="/about" className={styles.navLink}>About</a>
+          <a href="/products" className={styles.navLink}>Products</a>
+          <a href="/contact" className={styles.navLink}>Contact</a>
+        </div>
 
-      {/* Icons */}
-      <div className="flex items-center gap-4 text-[#1a1a1a] font-medium">
-        <span className="cursor-pointer hover:text-blue-600 transition">SIGN IN</span>
-        <FaShoppingCart className="cursor-pointer text-xl hover:text-blue-600 transition" />
-        <FaUser className="cursor-pointer text-xl hover:text-blue-600 transition" />
+        {/* Action Buttons (Desktop) */}
+        <div className={styles.actionButtonsDesktop}>
+          <a href="/signin" className={styles.signInLink}>SIGN IN</a>
+          <a href="/cart" className={styles.cartButton}>
+            Cart
+          </a>
+        </div>
+
+        {/* Mobile Menu Button (Hamburger Icon) */}
+        <div className={styles.mobileMenuButton}>
+          <button className={styles.hamburgerIcon}>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </nav>
   );
-}
+};
 
 export default Navbar;
+

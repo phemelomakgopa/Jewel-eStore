@@ -1,0 +1,120 @@
+/* client/src/components/Navbar.module.css */
+
+.navbar {
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+  padding-top: 1rem; /* py-4 */
+  padding-bottom: 1rem; /* py-4 */
+  padding-left: 1.5rem; /* px-6 */
+  padding-right: 1.5rem; /* px-6 */
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+@media (min-width: 768px) { /* md breakpoint */
+  .navbar {
+    padding-left: 2rem; /* md:px-8 */
+    padding-right: 2rem; /* md:px-8 */
+  }
+}
+
+.navbarContainer {
+  max-width: 1280px; /* container */
+  margin-left: auto; /* mx-auto */
+  margin-right: auto; /* mx-auto */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 700; /* font-bold */
+  color: #2d3748; /* gray-800 */
+}
+
+.navLinksDesktop {
+  display: none; /* hidden */
+  /* For desktop */
+  gap: 2rem; /* space-x-8 */
+}
+
+@media (min-width: 768px) { /* md breakpoint */
+  .navLinksDesktop {
+    display: flex; /* md:flex */
+  }
+}
+
+.navLink {
+  color: #4a5568; /* gray-600 */
+  transition: color 0.3s ease; /* transition duration-300 */
+  font-weight: 500; /* font-medium */
+  text-decoration: none; /* Remove underline from links */
+}
+
+.navLink:hover {
+  color: #3182ce; /* hover:text-blue-600 */
+}
+
+.actionButtonsDesktop {
+  display: none; /* hidden */
+  align-items: center;
+  gap: 1rem; /* space-x-4 */
+}
+
+@media (min-width: 768px) { /* md breakpoint */
+  .actionButtonsDesktop {
+    display: flex; /* md:flex */
+  }
+}
+
+.signInLink {
+  color: #3182ce; /* blue-600 */
+  transition: color 0.3s ease; /* transition duration-300 */
+  font-weight: 600; /* font-semibold */
+  text-decoration: none; /* Remove underline from links */
+}
+
+.signInLink:hover {
+  color: #2b6cb0; /* hover:text-blue-800 */
+}
+
+.cartButton {
+  background-color: #3182ce; /* blue-600 */
+  color: white;
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  border-radius: 9999px; /* rounded-full */
+  transition: background-color 0.3s ease; /* hover:bg-blue-700 transition duration-300 */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* gap-2 */
+  text-decoration: none; /* Remove underline from links */
+}
+
+.cartButton:hover {
+  background-color: #2b6cb0; /* hover:bg-blue-700 */
+}
+
+.mobileMenuButton {
+  /* Displayed on small screens, hidden on medium screens and up. */
+  display: block; /* default for mobile */
+}
+
+@media (min-width: 768px) { /* md breakpoint */
+  .mobileMenuButton {
+    display: none; /* md:hidden */
+  }
+}
+
+.hamburgerIcon {
+  color: #4a5568; /* gray-600 */
+  transition: color 0.3s ease;
+  cursor: pointer;
+  width: 1.5rem; /* w-6 */
+  height: 1.5rem; /* h-6 */
+}
+
+.hamburgerIcon:hover {
+  color: #3182ce; /* hover:text-blue-600 */
+}
