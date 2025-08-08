@@ -39,5 +39,27 @@ const Navbar = () => {
   );
 };
 
+// src/components/Navbar.jsx
+
+
 export default Navbar;
 
+/* src/components/Navbar.jsx
+//import React from 'react';
+import { FaShoppingCart } from 'react-icons/fa';
+export default function Navbar() {
+  return (
+    <header className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
+      <h1 className="text-2xl font-bold text-yellow-600">Jewel Store</h1>
+      <nav className="space-x-6 text-sm font-medium">
+        <a href="#" className="hover:text-yellow-600 transition">Home</a>
+        <a href="#" className="hover:text-yellow-600 transition">Sign In</a>
+        <a href="#" className="hover:text-yellow-600 transition">About</a>
+        <a href="#" className="hover:text-yellow-600 transition">Products</a>
+        <a href="#" className="hover:text-yellow-600 transition">Contact</a>
+      </nav>
+    </header>
+  );
+}
+
+//import './Navbar.css'; // Assuming you have a CSS file for Navbar styles*/

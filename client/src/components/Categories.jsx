@@ -1,5 +1,5 @@
 import React from 'react';
-import './Categories.css';
+import styles from './Categories.module.css';
 
 const categories = [
   'New Jewels',
@@ -11,11 +11,11 @@ const categories = [
 
 const Categories = () => {
   return (
-    <section className="categories-section">
-      <h2>Categories</h2>
-      <div className="category-list">
+    <section className={styles.categoriesSection}>
+      <h2 className={styles.categoriesHeading}>Categories</h2>
+      <div className={styles.categoryList}>
         {categories.map((category, index) => (
-          <div key={index} className="category-item">
+          <div key={index} className={styles.categoryItem}>
             {category}
           </div>
         ))}

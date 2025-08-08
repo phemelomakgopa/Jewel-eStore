@@ -2,119 +2,122 @@
 
 .navbar {
   background-color: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
-  padding-top: 1rem; /* py-4 */
-  padding-bottom: 1rem; /* py-4 */
-  padding-left: 1.5rem; /* px-6 */
-  padding-right: 1.5rem; /* px-6 */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 1rem 1.5rem;
   position: sticky;
   top: 0;
   z-index: 20;
 }
 
-@media (min-width: 768px) { /* md breakpoint */
+@media (min-width: 768px) {
   .navbar {
-    padding-left: 2rem; /* md:px-8 */
-    padding-right: 2rem; /* md:px-8 */
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
 }
 
 .navbarContainer {
-  max-width: 1280px; /* container */
-  margin-left: auto; /* mx-auto */
-  margin-right: auto; /* mx-auto */
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .logo {
-  font-size: 1.5rem; /* text-2xl */
-  font-weight: 700; /* font-bold */
-  color: #2d3748; /* gray-800 */
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2d3748;
 }
 
 .navLinksDesktop {
-  display: none; /* hidden */
-  /* For desktop */
-  gap: 2rem; /* space-x-8 */
+  display: none;
+  gap: 2rem;
 }
 
-@media (min-width: 768px) { /* md breakpoint */
+@media (min-width: 768px) {
   .navLinksDesktop {
-    display: flex; /* md:flex */
+    display: flex;
   }
 }
 
 .navLink {
-  color: #4a5568; /* gray-600 */
-  transition: color 0.3s ease; /* transition duration-300 */
-  font-weight: 500; /* font-medium */
-  text-decoration: none; /* Remove underline from links */
+  color: #4a5568;
+  transition: color 0.3s ease;
+  font-weight: 500;
+  text-decoration: none;
 }
 
 .navLink:hover {
-  color: #3182ce; /* hover:text-blue-600 */
+  color: #3182ce;
 }
 
 .actionButtonsDesktop {
-  display: none; /* hidden */
+  display: none;
   align-items: center;
-  gap: 1rem; /* space-x-4 */
+  gap: 1rem;
 }
 
-@media (min-width: 768px) { /* md breakpoint */
+@media (min-width: 768px) {
   .actionButtonsDesktop {
-    display: flex; /* md:flex */
+    display: flex;
   }
 }
 
 .signInLink {
-  color: #3182ce; /* blue-600 */
-  transition: color 0.3s ease; /* transition duration-300 */
-  font-weight: 600; /* font-semibold */
-  text-decoration: none; /* Remove underline from links */
+  color: #3182ce;
+  transition: color 0.3s ease;
+  font-weight: 600;
+  text-decoration: none;
 }
 
 .signInLink:hover {
-  color: #2b6cb0; /* hover:text-blue-800 */
+  color: #2b6cb0;
 }
 
 .cartButton {
-  background-color: #3182ce; /* blue-600 */
+  background-color: #3182ce;
   color: white;
-  padding: 0.5rem 1rem; /* px-4 py-2 */
-  border-radius: 9999px; /* rounded-full */
-  transition: background-color 0.3s ease; /* hover:bg-blue-700 transition duration-300 */
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  transition: background-color 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* gap-2 */
-  text-decoration: none; /* Remove underline from links */
+  gap: 0.5rem;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
 }
 
 .cartButton:hover {
-  background-color: #2b6cb0; /* hover:bg-blue-700 */
+  background-color: #2b6cb0;
 }
 
 .mobileMenuButton {
-  /* Displayed on small screens, hidden on medium screens and up. */
-  display: block; /* default for mobile */
+  display: block;
 }
 
-@media (min-width: 768px) { /* md breakpoint */
+@media (min-width: 768px) {
   .mobileMenuButton {
-    display: none; /* md:hidden */
+    display: none;
   }
 }
 
 .hamburgerIcon {
-  color: #4a5568; /* gray-600 */
+  color: #4a5568;
   transition: color 0.3s ease;
   cursor: pointer;
-  width: 1.5rem; /* w-6 */
-  height: 1.5rem; /* h-6 */
+  border: none;
+  background: none;
+  padding: 0;
 }
 
 .hamburgerIcon:hover {
-  color: #3182ce; /* hover:text-blue-600 */
+  color: #3182ce;
+}
+
+.hamburgerSvg {
+  width: 1.5rem;
+  height: 1.5rem;
 }

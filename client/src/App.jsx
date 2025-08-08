@@ -1,32 +1,37 @@
 import React from 'react';
-import Navbar from './components/Navbar';
-import Hero from './components/HeroSection';
-import Categories from './components/Categories';
-//import Products from './components/Products';
-//import About from './components/About';
-//import Footer from './components/Footer';
-
-// You might still have a global CSS file for body/html styles,
-// but component-specific styles will now be in .module.css files.
-// For example, if you want a global background color:
-// import './App.css'; // If you create a global App.css
+import Navbar from './components/Navbar.jsx';
+import Hero from './components/Hero.jsx';
+import Categories from './components/Categories.jsx';
+import Products from './components/Products.jsx';
+import About from './components/About.jsx';
+import Footer from './components/Footer.jsx';
 
 function App() {
   return (
-    // Removed Tailwind classes. If you need a global background,
-    // you can apply it via a class in a global CSS file (e.g., App.css)
-    // or directly to the body in index.html/index.js global CSS.
-    <div className="app-container"> {/* You can add a global class here if needed */}
+    <div className="app-container">
       <Navbar />
       <main>
+       {/* <Hero />*/}
         <Hero />
         <Categories />
-        
+        {<Products />}
+        <About /> 
         
       </main>
-      
+      {<Footer />}
     </div>
   );
 }
 
 export default App;
+
+/*function App() {
+  return (
+    <div style={{ padding: '20px', textAlign: 'center', backgroundColor: '#f0f0f0' }}>
+      <h1>Hello, React is actually rendering something! 🎉</h1>
+      <p>If you see this, your core setup is working.</p>
+    </div>
+  );
+}
+
+export default App;*/

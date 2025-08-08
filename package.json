@@ -172,14 +172,11 @@
     "yocto-queue": "^0.1.0"
   },
   "scripts": {
-<<<<<<< HEAD
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "build": "echo \"Building the project...\" && exit 0"
-=======
-    "test": "echo \"Error: no test specified\" && exit 1"
->>>>>>> d77beba2837cd4b3eaae806b9c9410420f9b5084
+    
   },
   "repository": {
     "type": "git",

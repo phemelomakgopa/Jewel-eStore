@@ -1,6 +1,7 @@
 import React from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import styles from './Hero.module.css'; // Import the CSS Module
+//import heroPlaceholder from './hero-placeholder.jpg';
 
 const Hero = () => {
   return (
@@ -17,7 +18,7 @@ const Hero = () => {
             Discover the Perfect Jewelry
           </h1>
           <p className={styles.heroParagraph}>
-            Shop timeless designs and premium craftsmanship for any occasion.
+            Shop timeless designs and premium pieces for any occasion.
           </p>
           <button className={styles.shopNowButton}>
             <div className={styles.shopNowContent}>
@@ -30,7 +31,7 @@ const Hero = () => {
         {/* Right Side Image */}
         <div className={styles.imageContainer}>
           <img
-            src="https://via.placeholder.com/400x300.png?text=Product+Preview"
+            src="./hero-placeholder.jpg" // Placeholder image path
             alt="Hero Jewelry"
             className={styles.heroImage}
           />

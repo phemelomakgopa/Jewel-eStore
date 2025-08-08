@@ -1,0 +1,40 @@
+/* client/src/components/Categories.module.css */
+.categoriesSection {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f8f8f8;
+  margin-top: 2rem;
+}
+
+.categoriesHeading {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+.categoryList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.categoryItem {
+  padding: 1rem 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #fff;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  color: #555;
+  font-weight: 500;
+}
+
+.categoryItem:hover {
+  background-color: #eef;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}

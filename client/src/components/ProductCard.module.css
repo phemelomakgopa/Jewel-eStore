@@ -1,0 +1,53 @@
+/* client/src/components/ProductCard.module.css */
+.productCard {
+  border: 1px solid #eee;
+  padding: 1rem;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: #fff;
+}
+
+.productCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+}
+
+.productImage {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.productName {
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+  color: #333;
+  font-weight: 600;
+}
+
+.productPrice {
+  font-weight: bold;
+  color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.addToCartButton {
+  background-color: #6a0dad;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.addToCartButton:hover {
+  background-color: #5a009d;
+  transform: translateY(-2px);
+}
