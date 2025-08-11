@@ -27,7 +27,7 @@ const Navbar = () => {
 
         {/* Action Buttons (Desktop) */}
         <div className={styles.actionButtonsDesktop}>
-          <a href="/signin" className={styles.signInLink}>SIGN UP</a>
+          <a href="/signin" className={styles.signInLink}>SIGN IN</a>
           <a href="/cart" className={styles.cartButton}>
             Cart
           </a>

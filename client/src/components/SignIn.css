@@ -5,37 +5,13 @@
     font-family: 'Arial', sans-serif;
   }
   
-  /* Header styles */
-  .signup-header {
-    background-color: #f3ebda; /* light cream */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 40px;
-  }
   
-  .signup-header .logo {
-    font-family: 'Georgia', serif;
-    font-size: 1.5rem;
-    font-style: italic;
-  }
-  
-  .signup-header nav a {
-    margin-left: 20px;
-    text-decoration: none;
-    color: black;
-    font-family: 'Garamond', serif;
-  }
-  
-  .signup-header nav a:hover {
-    text-decoration: underline;
-  }
   
   /* Form container */
   .signup-container {
     display: flex;
     justify-content: center;
-    padding: 50px 20px;
+    padding: 50px;
   }
   
   .signup-form {
@@ -76,6 +52,7 @@
   .create-account-btn:hover {
     opacity: 0.9;
     background-color: rgb(23, 10, 48);
+    transition: all 0.3s;
   }
   
   /* Divider */
@@ -108,5 +85,6 @@
   .google-btn:hover {
     opacity: 0.9;
     background-color: rgb(60, 11, 11);
+    transition: all 0.3s;
   }
   
