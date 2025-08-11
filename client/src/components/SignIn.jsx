@@ -39,7 +39,7 @@ export default function SignUp() {
   };
 
   // Email Sign-up
-  const handleCeateAccount = async (e) => {
+  const handleCreateAccount = async (e) => {
     e.preventDefault();
 
     if (password !== repeatPassword) {
