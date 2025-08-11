@@ -121,3 +121,18 @@
   width: 1.5rem;
   height: 1.5rem;
 }
+
+/* Cart icon */
+.cartButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cartIcon {
+  font-size: 1.2rem;
+}
+
+.cartText {
+  font-size: 0.9rem;
+}

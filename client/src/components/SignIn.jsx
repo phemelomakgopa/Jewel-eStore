@@ -73,7 +73,6 @@ export default function SignUp() {
       {/* Sign Up Form */}
       <div className="signup-container">
         <form className="signup-form" onSubmit={handleCreateAccount}>
-          <label>Email address *</label>
           <input 
             type="email"
             required
@@ -82,7 +81,6 @@ export default function SignUp() {
             onChange={(e) => setEmail(e.target.value)}
             />
 
-          <label>Password *</label>
           <input
             type="password"
             required
@@ -91,7 +89,6 @@ export default function SignUp() {
             onChange={(e) => setPassword(e.target.value)}
             />
 
-          <label>Repeat passwords *</label>
           <input
             type="password"
             required

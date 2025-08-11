@@ -6,7 +6,9 @@ import Categories from './components/Categories.jsx';
 import Products from './components/Products.jsx';
 import About from './components/About.jsx';
 import Footer from './components/Footer.jsx';
-import SignIn from './components/SignIn.jsx'; // You mentioned you have this
+import SignIn from './components/SignIn.jsx'; 
+import Cart from './components/Cart.jsx';
+import Checkout from './components/Checkout.jsx';
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/products" element={<Products />} />
             <Route path="/signin" element={<SignIn />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
             
             {/* Fallback route - shows main page if no match */}
             <Route path="*" element={

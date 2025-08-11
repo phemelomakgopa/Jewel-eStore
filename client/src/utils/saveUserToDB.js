@@ -1,7 +1,6 @@
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../config/firebaseConfig";
 import { adminEmail } from "../config/adminList";
-import { ROUND_HALF_DOWN } from "bignumber.js";
 
 export async function saveUserToDB(user) {
     try {
