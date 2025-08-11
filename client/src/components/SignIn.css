@@ -1,0 +1,112 @@
+/* Page background */
+.signup-page {
+    background-color: #b7a892; /* beige background */
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  /* Header styles */
+  .signup-header {
+    background-color: #f3ebda; /* light cream */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+  }
+  
+  .signup-header .logo {
+    font-family: 'Georgia', serif;
+    font-size: 1.5rem;
+    font-style: italic;
+  }
+  
+  .signup-header nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: black;
+    font-family: 'Garamond', serif;
+  }
+  
+  .signup-header nav a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Form container */
+  .signup-container {
+    display: flex;
+    justify-content: center;
+    padding: 50px 20px;
+  }
+  
+  .signup-form {
+    background-color: #5e4a3a; /* brown form background */
+    padding: 40px;
+    border-radius: 2px;
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .signup-form label {
+    color: black;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+  }
+  
+  .signup-form input {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: #d9d9d9; /* light grey fields */
+  }
+  
+  /* Create Account Button */
+  .create-account-btn {
+    background-color: black;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    font-size: 1rem;
+  }
+  
+  .create-account-btn:hover {
+    opacity: 0.9;
+    background-color: rgb(23, 10, 48);
+  }
+  
+  /* Divider */
+  .divider {
+    text-align: center;
+    color: white;
+    font-size: 0.8rem;
+    margin: 10px 0;
+  }
+  
+  /* Google Button */
+  .google-btn {
+    background-color: black;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .google-btn img {
+    width: 20px;
+    margin-right: 8px;
+  }
+  
+  .google-btn:hover {
+    opacity: 0.9;
+    background-color: rgb(60, 11, 11);
+  }
+  

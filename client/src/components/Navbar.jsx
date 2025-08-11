@@ -1,7 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import styles from './Navbar.module.css'; // Import the CSS Module
 
 const Navbar = () => {
+  const navigate = useNavigate(); // Initialize the navigate function
+
+  const handleSignInClick = () => {
+    navigate('/signin'); // Programmatically navigate to signin page
+  };
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.navbarContainer}>
@@ -20,7 +27,7 @@ const Navbar = () => {
 
         {/* Action Buttons (Desktop) */}
         <div className={styles.actionButtonsDesktop}>
-          <a href="/signin" className={styles.signInLink}>SIGN IN</a>
+          <a href="/signin" className={styles.signInLink}>SIGN UP</a>
           <a href="/cart" className={styles.cartButton}>
             Cart
           </a>
