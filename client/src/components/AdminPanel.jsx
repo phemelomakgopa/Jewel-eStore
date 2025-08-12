@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import styles from "./AdminPanel.module.css";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getApp } from "firebase/app";
+
 export default function AdminDashboard() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
@@ -22,19 +25,42 @@ export default function AdminDashboard() {
     }
   };
 
+  // Add Firestore reference
+  const db = getFirestore(getApp());
+
   // Add product
-  const handleAddProduct = (e) => {
+  const handleAddProduct = async (e) => {
     e.preventDefault();
     const name = e.target.name.value;
     const desc = e.target.desc.value;
     const price = e.target.price.value;
     const images = e.target.images.files;
 
-    setProducts((prev) => [
-      ...prev,
-      { id: Date.now(), name, desc, price, imageCount: images.length },
-    ]);
-    e.target.reset();
+    // For simplicity, use the first image's name as the image string
+    // In production, upload the image and get its URL
+    let image = "";
+    if (images.length > 0) {
+      image = images[0].name;
+    }
+
+    const productData = {
+      name,
+      description: desc,
+      image,
+      price,
+    };
+
+    try {
+      await addDoc(collection(db, "products"), productData);
+      setProducts((prev) => [
+        ...prev,
+        { id: Date.now(), ...productData, imageCount: images.length },
+      ]);
+      e.target.reset();
+      alert("Product added to Firestore!");
+    } catch (error) {
+      alert("Error adding product: " + error.message);
+    }
   };
 
   // Delete product
@@ -68,7 +94,9 @@ export default function AdminDashboard() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button className="loginButton" onClick={handleLogin}>Login</button>
+          <button className="loginButton" onClick={handleLogin}>
+            Login
+          </button>
         </div>
       ) : (
         <div>
@@ -97,9 +125,24 @@ export default function AdminDashboard() {
             <div className={`${styles.tabContent} ${styles.tabContentActive}`}>
               <h2>Manage Products</h2>
               <form onSubmit={handleAddProduct}>
-                <input name="name" type="text" placeholder="Product Name" required />
-                <input name="desc" type="text" placeholder="Description" required />
-                <input name="price" type="number" placeholder="Price (R)" required />
+                <input
+                  name="name"
+                  type="text"
+                  placeholder="Product Name"
+                  required
+                />
+                <input
+                  name="desc"
+                  type="text"
+                  placeholder="Description"
+                  required
+                />
+                <input
+                  name="price"
+                  type="number"
+                  placeholder="Price (R)"
+                  required
+                />
                 <input name="images" type="file" multiple />
                 <button type="submit">Add Product</button>
               </form>
@@ -110,7 +153,9 @@ export default function AdminDashboard() {
                     <small>{p.desc}</small> <br />
                     <small>{p.price}</small> <br />
                     <em>{p.imageCount} image(s) uploaded</em> <br />
-                    <button onClick={() => handleDeleteProduct(p.id)}>🗑 Delete</button>
+                    <button onClick={() => handleDeleteProduct(p.id)}>
+                      🗑 Delete
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -134,7 +179,8 @@ export default function AdminDashboard() {
               <ul>
                 {filteredOrders.map((order) => (
                   <li key={order.id}>
-                    <strong>Order #{order.id}</strong> from {order.customer} <br />
+                    <strong>Order #{order.id}</strong> from {order.customer}{" "}
+                    <br />
                     Status: {order.status} <br />
                     <select
                       value={order.status}
