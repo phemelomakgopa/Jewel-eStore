@@ -9,6 +9,7 @@ import Footer from './components/Footer.jsx';
 import SignIn from './components/SignIn.jsx'; 
 import Cart from './components/Cart.jsx';
 import Checkout from './components/Checkout.jsx';
+import AdminPanel from './components/AdminPanel.jsx';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/adminpanel" element={<AdminPanel />} />
             
             {/* Fallback route - shows main page if no match */}
             <Route path="*" element={

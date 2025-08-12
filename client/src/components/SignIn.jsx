@@ -27,7 +27,7 @@ export default function SignUp() {
       // Navigate
       // After sign-in success:
       if (adminEmail.includes(user.email)){
-        navigate("/admin");
+        navigate("/adminpanel");
       }
       else {
         navigate("/");
@@ -55,7 +55,7 @@ export default function SignUp() {
 
       // Navigate
       if (adminEmail.includes(user.email)) {
-        navigate("/admin");
+        navigate("/adminpanel");
       } else {
         navigate("/");
       }
