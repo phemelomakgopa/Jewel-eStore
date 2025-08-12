@@ -1,13 +1,25 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import styles from './Navbar.module.css'; // Import the CSS Module
+import { FaShoppingCart } from 'react-icons/fa';
 
 const Navbar = () => {
+  const navigate = useNavigate(); // Initialize the navigate function
+
+  const handleSignInClick = () => {
+    navigate('/signin'); // Programmatically navigate to signin page
+  };
+
+  const handleCartClick = () => {
+    navigate('/cart'); // Navigate to cart page
+  };
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.navbarContainer}>
         {/* Logo/Brand Name */}
         <div className={styles.logo}>
-          Jewel Store
+          Jewel Store.
         </div>
 
         {/* Navigation Links (Desktop) */}
@@ -21,8 +33,10 @@ const Navbar = () => {
         {/* Action Buttons (Desktop) */}
         <div className={styles.actionButtonsDesktop}>
           <a href="/signin" className={styles.signInLink}>SIGN IN</a>
+          
           <a href="/cart" className={styles.cartButton}>
-            Cart
+          <FaShoppingCart className={styles.cartIcon} />
+          <span classNmae={styles.cartText}>Cart</span>
           </a>
         </div>
 

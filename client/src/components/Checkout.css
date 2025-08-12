@@ -1,0 +1,51 @@
+.checkout-page {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+    background-color: #b8a892;
+    font-family: "Georgia", serif;
+    min-height: 100vh;
+  }
+  
+  .checkout-left, .checkout-right {
+    flex: 1;
+    background: #d4c4a8;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .shipping-form input, .payment-form input {
+    width: 60%;
+    padding: 0.6rem;
+    margin-bottom: 0.8rem;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+  }
+  
+  .place-order-btn {
+    background: black;
+    color: white;
+    padding: 0.8rem 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .summary-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .summary-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+  }
+  
+  @media (max-width: 768px) {
+    .checkout-page {
+      flex-direction: column;
+    }
+  }
+  

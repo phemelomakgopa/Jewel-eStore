@@ -3,7 +3,7 @@ import ProductCard from './ProductCard.jsx';
 import styles from './Products.module.css';
 
 const dummyProducts = [
-  { id: 1, name: 'Elegant Diamond Ring', price: '$1200', imageUrl: 'https://placehold.co/300x200/e0e0e0/333333?text=Product+1' },
+  { id: 1, name: 'Elegant Diamond Ring', price: 'R1200', imageUrl: 'https://placehold.co/300x200/e0e0e0/333333?text=Product+1' },
   { id: 2, name: 'Sapphire Pendant Necklace', price: '$850', imageUrl: 'https://placehold.co/300x200/d0d0d0/333333?text=Product+2' },
   { id: 3, name: 'Classic Pearl Earrings', price: '$350', imageUrl: 'https://placehold.co/300x200/c0c0c0/333333?text=Product+3' },
   { id: 4, name: 'Gold Chain Bracelet', price: '$480', imageUrl: 'https://placehold.co/300x200/b0b0b0/333333?text=Product+4' },
