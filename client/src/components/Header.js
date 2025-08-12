@@ -4,7 +4,7 @@ import './Header.js'; // We'll create this file for styling
 const Header = () => {
   return (
     <header className="header">
-      <div className="logo">Jewel Store</div>
+      <div className="logo">Jewel Store.</div>
       <nav className="navigation">
         <a href="/">Home</a>
         <a href="/about">About</a>

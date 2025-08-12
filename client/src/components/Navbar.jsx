@@ -1,6 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import styles from './Navbar.module.css'; // Import the CSS Module
+<<<<<<< Updated upstream
+=======
+import { FaShoppingCart, FaUserCircle } from 'react-icons/fa';
+>>>>>>> Stashed changes
 
 const Navbar = () => {
   const navigate = useNavigate(); // Initialize the navigate function
@@ -29,18 +33,19 @@ const Navbar = () => {
         <div className={styles.actionButtonsDesktop}>
           <a href="/signin" className={styles.signInLink}>SIGN IN</a>
           <a href="/cart" className={styles.cartButton}>
+<<<<<<< Updated upstream
             Cart
+=======
+          <FaShoppingCart className={styles.cartIcon} />
+          <span classNmae={styles.cartText}></span>
+>>>>>>> Stashed changes
           </a>
+
+          <FaUserCircle className={styles.userIcon} />
+
         </div>
 
-        {/* Mobile Menu Button (Hamburger Icon) */}
-        <div className={styles.mobileMenuButton}>
-          <button className={styles.hamburgerIcon}>
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-            </svg>
-          </button>
-        </div>
+       
       </div>
     </nav>
   );
