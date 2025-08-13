@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import "./SignIn.css";
-import {
-  getAuth,
-  signInWithPopup,
-  GoogleAuthProvider,
-  createUserWithEmailAndPassword,
-} from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { app } from "../config/firebaseConfig";
 import { saveUserToDB } from "../utils/saveUserToDB";
@@ -31,12 +26,14 @@ export default function SignUp() {
 
       // Navigate
       // After sign-in success:
-      if (adminEmail.includes(user.email)) {
-        navigate("/adminpanel");
-      } else {
+      if (adminEmail.includes(user.email)){
+        navigate("/admin");
+      }
+      else {
         navigate("/");
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error("Google Sign-In failed", error);
     }
   };
@@ -51,39 +48,38 @@ export default function SignUp() {
     }
 
     try {
-      const { user } = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
 
       // Save to DB
       await saveUserToDB(user);
 
       // Navigate
       if (adminEmail.includes(user.email)) {
-        navigate("/adminpanel");
+        navigate("/admin");
       } else {
         navigate("/");
       }
-    } catch (error) {
+    }
+    catch (error)
+    {
       console.error("Email sign-up failed:", error);
       alert(error.message);
     }
   };
+  
 
   return (
     <div className="signup-page">
       {/* Sign Up Form */}
       <div className="signup-container">
         <form className="signup-form" onSubmit={handleCreateAccount}>
-          <input
+          <input 
             type="email"
             required
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-          />
+            />
 
           <input
             type="password"
@@ -91,7 +87,7 @@ export default function SignUp() {
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-          />
+            />
 
           <input
             type="password"
