@@ -85,3 +85,37 @@
   background-color: rgb(60, 11, 11);
   transition: all 0.3s;
 }
+
+/* Forgot Password Link */
+.forgot-password a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.forgot-password a:hover {
+  color: #d9d9d9;
+  text-decoration: underline;
+}
+
+/* Don't have an account section */
+.signup-bottom {
+  text-align: center;
+  margin-top: 18px;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.signup-bottom a {
+  color: #0602ff8e;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.signup-bottom a:hover {
+  color: #d9d9d9;
+  text-decoration: underline;
+}
