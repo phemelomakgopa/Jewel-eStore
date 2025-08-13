@@ -1,85 +1,57 @@
 import React, { useState } from "react";
 import "./SignIn.css";
-import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { useNavigate, Link } from "react-router-dom";
 import { app } from "../config/firebaseConfig";
-import { saveUserToDB } from "../utils/saveUserToDB";
 import { adminEmail } from "../config/adminList";
 
-export default function SignUp() {
+export default function SignIn() {
   const navigate = useNavigate();
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
 
-  // Google Sign-in
+  // Google Sign-In (optional, remove if not needed)
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
-      // Save to DB
-      await saveUserToDB(user);
-
-      // Navigate
-      // After sign-in success:
-      if (adminEmail.includes(user.email)){
-        navigate("/admin");
-      }
-      else {
-        navigate("/");
-      }
-    }
-    catch (error) {
-      console.error("Google Sign-In failed", error);
+      navigate("/");
+    } catch (error) {
+      alert("Google Sign-In failed. Please try again.");
     }
   };
 
-  // Email Sign-up
-  const handleCreateAccount = async (e) => {
+  // Email Sign-In
+  const handleSignIn = async (e) => {
     e.preventDefault();
-
-    if (password !== repeatPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-
     try {
-      const { user } = await createUserWithEmailAndPassword(auth, email, password);
-
-      // Save to DB
-      await saveUserToDB(user);
-
-      // Navigate
-      if (adminEmail.includes(user.email)) {
-        navigate("/admin");
-      } else {
-        navigate("/");
-      }
-    }
-    catch (error)
-    {
-      console.error("Email sign-up failed:", error);
-      alert(error.message);
+      const { user } = await signInWithEmailAndPassword(auth, email, password);
+      // You can store/display user initial after this
+      navigate("/");
+    } catch (error) {
+      alert("Invalid email or password. Please try again.");
     }
   };
-  
 
   return (
     <div className="signup-page">
-      {/* Sign Up Form */}
       <div className="signup-container">
-        <form className="signup-form" onSubmit={handleCreateAccount}>
-          <input 
+        <form className="signup-form" onSubmit={handleSignIn}>
+          <input
             type="email"
             required
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            />
+          />
 
           <input
             type="password"
@@ -87,18 +59,20 @@ export default function SignUp() {
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            />
-
-          <input
-            type="password"
-            required
-            placeholder="Repeat your password"
-            value={repeatPassword}
-            onChange={(e) => setRepeatPassword(e.target.value)}
           />
 
+          <div
+            className="forgot-password"
+            style={{
+              textAlign: "right",
+              marginBottom: "10px",
+            }}
+          >
+            <Link to="/forgotpassword">Forgot Password?</Link>
+          </div>
+
           <button type="submit" className="create-account-btn">
-            Create account
+            Sign In
           </button>
 
           <div className="divider">or</div>
@@ -111,9 +85,13 @@ export default function SignUp() {
             <img
               src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
               alt="Google logo"
+              style={{ width: 20, marginRight: 8 }}
             />
             Continue with Google
           </button>
+          <div className="signup-bottom">
+            Don't have an account? <Link to="/signup">Sign Up</Link>
+          </div>
         </form>
       </div>
     </div>

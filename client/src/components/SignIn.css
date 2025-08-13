@@ -2,10 +2,8 @@
 .signup-page {
   background-color: #b7a892; /* beige background */
   min-height: 100vh;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
-
-
 
 /* Form container */
 .signup-container {
