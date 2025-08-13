@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import PageTitle from "./components/PageTitle.js"
 import Navbar from './components/Navbar.jsx';
 import Hero from './components/Hero.jsx';
 import Categories from './components/Categories.jsx';
@@ -14,6 +15,8 @@ import AdminPanel from './components/AdminPanel.jsx';
 function App() {
   return (
     <Router>
+      <PageTitle/>
+      
       <div className="app-container">
         <Navbar />
         <main>
