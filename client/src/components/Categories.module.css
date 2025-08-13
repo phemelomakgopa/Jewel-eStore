@@ -30,7 +30,7 @@
 .categoriesHeading {
   font-family: 'Livvic', sans-serif;
   font-size: 30px;
-  font-weight: bold;
+  font-weight: normal;
   color: #000;
 }
 
@@ -45,7 +45,6 @@
 .categoryItem {
   width: 180px;
   cursor: pointer;
-  border: black;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
   
   /* Animation */
@@ -69,9 +68,13 @@
 }
 
 .categoryItem:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0,0,0,0.15);
-  border: 2px solid black; /* Added border on hover */
+  transform: translateY(-8px) scale(1.05); 
+  box-shadow: 0 12px 20px rgba(0,0,0,0.2); /* Deeper shadow */
+  border: 1px solid grey;
+  z-index: 10; /* Ensures card lifts above others */
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 1.5), 
+              box-shadow 0.3s ease,
+              border 0.3s ease; /* Bouncy animation */
 }
 
 /* Category image */
@@ -79,7 +82,7 @@
   width: 100%;
   height: 180px;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 0px;
 }
 
 /* Category text */
@@ -88,6 +91,6 @@
   font-family: 'Mulish', sans-serif;
   font-size: 20px;
   text-align: left;
-  font-weight: 550;
+  font-weight: normal;
   color: #000000; 
 }

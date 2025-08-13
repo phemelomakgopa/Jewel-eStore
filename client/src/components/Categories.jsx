@@ -9,12 +9,12 @@ import earringsImg from '../assets/GoldFloral_Earrings.jpg';
 import ankletsImg from '../assets/IMG-20250813-WA0017.jpg';
 
 const categories = [
-  { name: 'New Jewels', image: newJewelImg },
-  { name: 'Rings', image: ringsImg },
-  { name: 'Necklaces', image: necklacesImg },
-  { name: 'Bracelets', image: braceletsImg },
-  { name: 'Earrings', image: earringsImg },
-  { name: 'Anklets', image: ankletsImg },
+  { name: 'NEW JEWELS', image: newJewelImg },
+  { name: 'RINGS', image: ringsImg },
+  { name: 'NECKLACES', image: necklacesImg },
+  { name: 'BRACELETS', image: braceletsImg },
+  { name: 'EARRINGS', image: earringsImg },
+  { name: 'ANKELETS', image: ankletsImg },
 ];
 
 const Categories = () => {

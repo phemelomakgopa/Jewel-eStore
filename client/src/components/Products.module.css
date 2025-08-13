@@ -1,23 +1,100 @@
-/* client/src/components/Products.module.css */
 .productsSection {
+  background-color: #B6AB99;
+  padding: 3rem 1rem;
   text-align: center;
-  padding: 2rem;
-  margin-top: 2rem;
+}
+
+/* Divider line with text in middle */
+.sectionDivider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.sectionDivider::before,
+.sectionDivider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #000;
+}
+
+.sectionDivider:not(:empty)::before {
+  margin-right: 1rem;
+}
+
+.sectionDivider:not(:empty)::after {
+  margin-left: 1rem;
 }
 
 .productsHeading {
-  font-size: 2rem;
-  color: #333;
-  margin-bottom: 2rem;
-  font-weight: bold;
+  font-family: 'Livvic', sans-serif;
+  font-size: 30px;
+  font-weight: normal;
+  color: #000;
 }
 
-.productGrid {
+/* Products grid */
+.productsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
   max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
+}
+
+.productCard {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.productCard:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+}
+
+/* Product image */
+.productImage {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Product name */
+.productName {
+  margin-top: 0.8rem;
+  font-family: 'Mulish', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+}
+
+/* Price */
+.productPrice {
+  margin-top: 0.3rem;
+  font-size: 16px;
+  color: #333;
+}
+
+/* Add to cart button */
+.addToCartBtn {
+  margin-top: 0.8rem;
+  padding: 0.5rem 1rem;
+  background-color: #5C4033; /* chocolate brown */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.addToCartBtn:hover {
+  background-color: #4b332a;
 }
