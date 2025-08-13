@@ -10,12 +10,12 @@ import SignIn from "./components/SignIn.jsx";
 import Cart from "./components/Cart.jsx";
 import Checkout from "./components/Checkout.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
-import ForgotPassword from "./components/ForgotPassword.jsx";
-import SignUp from "./components/SignUp.jsx";
 
 function App() {
   return (
     <Router>
+      <PageTitle />
+
       <div className="app-container">
         <Navbar />
         <main>

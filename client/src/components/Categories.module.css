@@ -1,40 +1,93 @@
-/* client/src/components/Categories.module.css */
 .categoriesSection {
+  background-color: #B6AB99; /* Same bg as homepage */
+  padding: 3rem 1rem;
   text-align: center;
-  padding: 2rem;
-  background-color: #f8f8f8;
-  margin-top: 2rem;
+}
+
+/* Divider with text in middle */
+.sectionDivider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.sectionDivider::before,
+.sectionDivider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #000; /* Line color */
+}
+
+.sectionDivider:not(:empty)::before {
+  margin-right: 1rem;
+}
+
+.sectionDivider:not(:empty)::after {
+  margin-left: 1rem;
 }
 
 .categoriesHeading {
-  font-size: 2rem;
-  color: #333;
-  margin-bottom: 1.5rem;
+  font-family: 'Livvic', sans-serif;
+  font-size: 30px;
   font-weight: bold;
+  color: #000;
 }
 
+/* Category cards grid */
 .categoryList {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1.5rem;
-  margin-top: 1rem;
+  gap: 2rem;
 }
 
 .categoryItem {
-  padding: 1rem 1.5rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  width: 180px;
   cursor: pointer;
-  background-color: #fff;
-  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  color: #555;
-  font-weight: 500;
+  border: black;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+  
+  /* Animation */
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.6s ease forwards;
+}
+
+/* Animate each card with a delay based on index */
+.categoryItem:nth-child(1) { animation-delay: 0.1s; }
+.categoryItem:nth-child(2) { animation-delay: 0.2s; }
+.categoryItem:nth-child(3) { animation-delay: 0.3s; }
+.categoryItem:nth-child(4) { animation-delay: 0.4s; }
+.categoryItem:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .categoryItem:hover {
-  background-color: #eef;
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+  border: 2px solid black; /* Added border on hover */
+}
+
+/* Category image */
+.categoryImage {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Category text */
+.categoryText {
+  margin-top: 0.8rem;
+  font-family: 'Mulish', sans-serif;
+  font-size: 20px;
+  text-align: left;
+  font-weight: 550;
+  color: #000000; 
 }
