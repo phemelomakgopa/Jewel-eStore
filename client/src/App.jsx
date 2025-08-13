@@ -7,6 +7,8 @@ import Products from "./components/Products.jsx";
 import About from "./components/About.jsx";
 import Footer from "./components/Footer.jsx";
 import SignIn from "./components/SignIn.jsx";
+import SignUp from "./components/SignUp.jsx";
+import ForgotPassword from "./components/ForgotPassword.jsx";
 import Cart from "./components/Cart.jsx";
 import Checkout from "./components/Checkout.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
@@ -14,8 +16,6 @@ import AdminPanel from "./components/AdminPanel.jsx";
 function App() {
   return (
     <Router>
-      <PageTitle />
-
       <div className="app-container">
         <Navbar />
         <main>
@@ -37,11 +37,11 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/products" element={<Products />} />
             <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/forgotpassword" element={<ForgotPassword />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/adminpanel" element={<AdminPanel />} />
-            <Route path="/forgotpassword" element={<ForgotPassword />} />
-            <Route path="/signup" element={<SignUp />} />
 
             {/* Fallback route - shows main page if no match */}
             <Route
