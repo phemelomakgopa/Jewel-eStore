@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
 import ShippingAddressForm from "./ShippingAddressForm";
+import StripePaymentForm from "./StripePaymentForm";
 import "./Checkout.css";
+import emailjs from '@emailjs/browser';
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -17,10 +19,6 @@ export default function Checkout() {
 
   const [payment, setPayment] = useState({
     method: "card", // card, eft, instant_eft
-    cardHolderName: "",
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
     bankName: "",
     accountType: "cheque", // cheque, savings
   });
@@ -72,26 +70,16 @@ export default function Checkout() {
       .substring(0, 5);
   };
 
-  const handlePlaceOrder = async () => {
-    if (!currentUser) {
-      navigate('/login', { state: { from: '/checkout' } });
+  const handleSuccessfulPayment = async (paymentIntentId) => {
+    if (!currentUser || !address) {
+      setError("User or address not found. Cannot place order.");
       return;
     }
 
+    setSavingOrder(true);
+    setError("");
+
     try {
-      setSavingOrder(true);
-      setError("");
-
-      // Basic validation
-      if (!address?.fullName) {
-        throw new Error("Please provide a shipping address");
-      }
-
-      if (!payment.cardNumber || !payment.expiryDate || !payment.cvv || !payment.cardHolderName) {
-        throw new Error("Please fill in all payment details");
-      }
-
-      // Create order data
       const orderData = {
         items,
         shippingAddress: address,
@@ -102,29 +90,39 @@ export default function Checkout() {
           total,
         },
         payment: {
-          last4: payment.cardNumber.slice(-4),
-          brand: getCardBrand(payment.cardNumber),
+          method: 'card',
+          stripePaymentId: paymentIntentId,
         },
       };
 
-      // Save to Firestore
       const order = await createOrder(orderData);
-      
-      // Send confirmation email
-      await sendOrderConfirmationEmail(order, address);
-      
-      // Clear cart and show success
+
+      sendOrderConfirmationEmail({
+        orderId: order.id,
+        customer: {
+          name: currentUser.displayName || 'Valued Customer',
+          email: currentUser.email,
+        },
+        ...order,
+      });
+
       clearCart();
       setOrderId(order.id);
       setOrderPlaced(true);
       setActiveStep(3);
-
     } catch (err) {
-      console.error("Order error:", err);
-      setError(err.message || "Failed to place order. Please try again.");
+      console.error("Order creation error:", err);
+      setError(err.message || "Failed to save order after payment. Please contact support.");
     } finally {
       setSavingOrder(false);
     }
+  };
+
+  // Placeholder for EFT/other payment methods
+  const handlePlaceOrder = async () => {
+    console.log("Placing order with method:", payment.method);
+    // This would contain the logic for non-Stripe payment methods
+    alert("This payment method is not yet implemented.");
   };
 
   const getCardBrand = (cardNumber) => {
@@ -135,39 +133,30 @@ export default function Checkout() {
     return 'unknown';
   };
 
-  const sendOrderConfirmationEmail = async (order, shippingAddress) => {
-    try {
-      // Email service integration (using EmailJS or similar service)
-      const emailData = {
-        to_email: shippingAddress.email || currentUser.email,
-        to_name: shippingAddress.fullName || currentUser.displayName,
-        order_id: order.id,
-        order_date: new Date().toLocaleDateString('en-ZA'),
-        total_amount: `R${(order.amounts.total / 100).toFixed(2)}`,
-        items: order.items.map(item => 
-          `${item.name} (Qty: ${item.quantity}) - R${(item.price * item.quantity / 100).toFixed(2)}`
-        ).join('\n'),
-        shipping_address: `${shippingAddress.fullName}\n${shippingAddress.streetAddress}\n${shippingAddress.city}, ${shippingAddress.province}\n${shippingAddress.postalCode}\nSouth Africa`,
-        payment_method: payment.method === 'card' ? 'Credit/Debit Card' : 
-                       payment.method === 'instant_eft' ? 'Instant EFT' : 'Bank Transfer (EFT)',
-        subtotal: `R${(order.amounts.subtotal / 100).toFixed(2)}`,
-        shipping: `R${(order.amounts.shipping / 100).toFixed(2)}`,
-        tax: `R${(order.amounts.tax / 100).toFixed(2)}`,
-      };
+  const sendOrderConfirmationEmail = (orderDetails) => {
+    const templateParams = {
+      to_name: orderDetails.customer.name,
+      to_email: orderDetails.customer.email,
+      order_id: orderDetails.orderId,
+      order_date: new Date(orderDetails.createdAt).toLocaleDateString(),
+      total_amount: `R ${orderDetails.amounts.total.toFixed(2)}`,
+      shipping_address: `${orderDetails.shippingAddress.street}, ${orderDetails.shippingAddress.suburb}, ${orderDetails.shippingAddress.city}, ${orderDetails.shippingAddress.province}, ${orderDetails.shippingAddress.postalCode}`,
+      items: orderDetails.items.map(item => `${item.name} (x${item.quantity}) - R ${item.price.toFixed(2)}`).join('\n'),
+    };
 
-      // For now, we'll simulate email sending
-      // In production, you would integrate with EmailJS, SendGrid, or similar
-      console.log('Order confirmation email sent:', emailData);
-      
-      // Show success message to user
-      alert(`Order confirmation email sent to ${emailData.to_email}`);
-      
-      return true;
-    } catch (error) {
-      console.error('Failed to send confirmation email:', error);
-      // Don't throw error - order should still complete even if email fails
-      return false;
-    }
+    // Replace with your actual EmailJS Service ID, Template ID, and Public Key
+    const SERVICE_ID = 'YOUR_SERVICE_ID';
+    const TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+    const PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
+      .then((response) => {
+        console.log('SUCCESS!', response.status, response.text);
+        alert(`A confirmation email has been sent to ${orderDetails.customer.email}.`);
+      }, (err) => {
+        console.error('FAILED...', err);
+        alert('Failed to send confirmation email. Please check your order history.');
+      });
   };
 
   if (!currentUser) {
@@ -336,66 +325,10 @@ export default function Checkout() {
 
                 {/* Card Payment Form */}
                 {payment.method === "card" && (
-                  <div className="card-form">
-                    <div className="form-group">
-                      <label>Cardholder Name</label>
-                      <input
-                        type="text"
-                        name="cardHolderName"
-                        value={payment.cardHolderName}
-                        onChange={handlePaymentChange}
-                        placeholder="Name on card"
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Card Number</label>
-                      <input
-                        type="text"
-                        name="cardNumber"
-                        value={formatCardNumber(payment.cardNumber)}
-                        onChange={(e) => {
-                          const formatted = formatCardNumber(e.target.value);
-                          setPayment(p => ({ ...p, cardNumber: formatted }));
-                        }}
-                        placeholder="1234 5678 9012 3456"
-                        maxLength={19}
-                        required
-                      />
-                    </div>
-
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label>Expiry Date</label>
-                        <input
-                          type="text"
-                          name="expiryDate"
-                          value={formatExpiryDate(payment.expiryDate)}
-                          onChange={(e) => {
-                            const formatted = formatExpiryDate(e.target.value);
-                            setPayment(p => ({ ...p, expiryDate: formatted }));
-                          }}
-                          placeholder="MM/YY"
-                          maxLength={5}
-                          required
-                        />
-                      </div>
-
-                      <div className="form-group">
-                        <label>CVV</label>
-                        <input
-                          type="text"
-                          name="cvv"
-                          value={payment.cvv}
-                          onChange={handlePaymentChange}
-                          placeholder="123"
-                          maxLength={4}
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  <StripePaymentForm 
+                    amount={total} 
+                    onSuccessfulPayment={handleSuccessfulPayment} 
+                  />
                 )}
 
                 {/* Instant EFT Form */}
@@ -482,14 +415,16 @@ export default function Checkout() {
                   >
                     Back
                   </button>
-                  <button 
-                    type="button" 
-                    className="btn btn-primary"
-                    onClick={handlePlaceOrder}
-                    disabled={savingOrder}
-                  >
-                    {savingOrder ? 'Processing...' : 'Place Order'}
-                  </button>
+                  {payment.method !== 'card' && (
+                    <button 
+                      type="button" 
+                      className="btn btn-primary"
+                      onClick={handlePlaceOrder}
+                      disabled={savingOrder}
+                    >
+                      {savingOrder ? 'Placing Order...' : 'Place Order'}
+                    </button>
+                  )}
                 </div>
               </div>
               {error && <div className="error-message">{error}</div>}

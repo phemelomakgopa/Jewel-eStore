@@ -1,0 +1,15 @@
+{
+  "name": "jewel-estore-server",
+  "version": "1.0.0",
+  "description": "Backend server for Jewel-eStore.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "stripe": "^14.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
+  }
+}
