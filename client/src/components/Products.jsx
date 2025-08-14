@@ -1,8 +1,7 @@
-import React, {useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
 import styles from "./Products.module.css";
-
 
 // images
 import Bronze_Ring from "../assets/Bronze_Ring.jpg";
@@ -100,8 +99,7 @@ const Products = ({ categoryFilter = null }) => {
 
       <div className={styles.productsGrid}>
         {filteredProducts.map((product, index) => (
-          <Link
-            to={`/product/${index + 1}`} key={product.id || index} className={styles.productCard} data-aos="fade-up" data-aos-delay={index * 60}>
+          <div key={product.id || index} className={styles.productCard} data-aos="fade-up" data-aos-delay={index * 60}>
             <div className={styles.imageContainer} onClick={() => product.id && navigate(`/product/${product.id}`)}>
               <img 
                 src={product.image} 
@@ -111,8 +109,26 @@ const Products = ({ categoryFilter = null }) => {
               />
             </div>
             <h3 className={styles.productName}>{product.name}</h3>
-            <p className={styles.productPrice}>R{product.price.toFixed(2)}</p>
-            <button className={styles.addToCartBtn}>Add to Cart</button>
+            <p className={styles.productPrice}>R{(product.price / 100).toFixed(2)}</p>
+            
+            <button 
+              className={`${styles.addToCartBtn} ${
+                loadingProductId === product.id ? styles.loading : ''
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAddToCart(product);
+              }}
+              disabled={loadingProductId === product.id}
+            >
+              {loadingProductId === product.id ? (
+                'Adding...'
+              ) : addedProductId === product.id ? (
+                '✓ Added!'
+              ) : (
+                'Add to Cart'
+              )}
+            </button>
           </div>
         ))}
         {filteredProducts.length === 0 && (
