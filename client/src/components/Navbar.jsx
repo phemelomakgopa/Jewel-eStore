@@ -43,6 +43,12 @@ const Navbar = () => {
           <a href="/cart" className={styles.cartButton}>
             <FaShoppingCart className={styles.cartIcon} />
           </a>
+          
+          {currentUser && (
+            <a href="/orders" className={styles.navLink}>
+              My Orders
+            </a>
+          )}
 
           {currentUser ? (
             <UserProfile />

@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../contexts/CartContext";
 import styles from "./Products.module.css";
 
 // images
@@ -21,50 +23,119 @@ import GoldChained_Earrings from "../assets/GoldChained_Earrings.jpg";
 import Gold_Whitey_Earrings from "../assets/Gold+Whitey_Earrings.jpg";
 
 const products = [
-  { name: "Bronze Ring", image: Bronze_Ring, price: 19.99 },
-  { name: "Chain & Pearly Bracelet", image: Chain_Pearly_Bracelet, price: 45.99 },
-  { name: "Chain Diamond Bracelet", image: ChainDiamond_Bracelet, price: 79.99 },
-  { name: "Diamond Bracelet", image: Diamond_Bracelet, price: 99.99 },
-  { name: "Diamond Heart Earrings", image: Diamond_Heart_Earrings, price: 59.99 },
-  { name: "Diamond Ring", image: Diamond_Ring, price: 89.99 },
-  { name: "Diamond Stone and Gold Ring", image: DiamondStone_GOld_Ring, price: 75.5 },
-  { name: "Distant Pearly Bracelet", image: Disntant_Pearly_Bracelet, price: 29.99 },
-  { name: "Flat Pearls Bracelet", image: Flat_Pearls_Bracelet, price: 34.99 },
-  { name: "Gear Diamond & Gold Ring", image: GearDiamond_Gold_Ring, price: 69.99 },
-  { name: "Gear Diamond & Gold Ring 2", image: GearDiamond_Gold_Ring2, price: 74.99 },
-  { name: "Gear Diamond & Gold Ring 3", image: GearDiamond_Gold_Ring3, price: 65.0 },
-  { name: "Hooked Pearl & Gold Heart Earrings", image: HookedPearl_GoldHeart_Earrings, price: 49.99 },
-  { name: "Heart Pearl Earrings", image: HeartPearl_Earrings, price: 39.5 },
-  { name: "Gold Floral Earrings", image: GoldFloral_Earrings, price: 55.99 },
-  { name: "Gold Chained Earrings", image: GoldChained_Earrings, price: 42.99 },
-  { name: "Gold & Whitey Earrings", image: Gold_Whitey_Earrings, price: 32.0 },
+  { id: 1, name: "Bronze Ring", image: Bronze_Ring, price: 1999, category: "rings" },
+  { id: 2, name: "Chain & Pearly Bracelet", image: Chain_Pearly_Bracelet, price: 4599, category: "bracelets" },
+  { id: 3, name: "Chain Diamond Bracelet", image: ChainDiamond_Bracelet, price: 7999, category: "bracelets" },
+  { id: 4, name: "Diamond Bracelet", image: Diamond_Bracelet, price: 9999, category: "bracelets" },
+  { id: 5, name: "Diamond Heart Earrings", image: Diamond_Heart_Earrings, price: 5999, category: "earrings" },
+  { id: 6, name: "Diamond Ring", image: Diamond_Ring, price: 8999, category: "rings" },
+  { id: 7, name: "Diamond Stone and Gold Ring", image: DiamondStone_GOld_Ring, price: 7550, category: "rings" },
+  { id: 8, name: "Distant Pearly Bracelet", image: Disntant_Pearly_Bracelet, price: 2999, category: "bracelets" },
+  { id: 9, name: "Flat Pearls Bracelet", image: Flat_Pearls_Bracelet, price: 3499, category: "bracelets" },
+  { id: 10, name: "Gear Diamond & Gold Ring", image: GearDiamond_Gold_Ring, price: 6999, category: "rings" },
+  { id: 11, name: "Gear Diamond & Gold Ring 2", image: GearDiamond_Gold_Ring2, price: 7499, category: "rings" },
+  { id: 12, name: "Gear Diamond & Gold Ring 3", image: GearDiamond_Gold_Ring3, price: 6500, category: "rings" },
+  { id: 13, name: "Hooked Pearl & Gold Heart Earrings", image: HookedPearl_GoldHeart_Earrings, price: 4999, category: "earrings" },
+  { id: 14, name: "Heart Pearl Earrings", image: HeartPearl_Earrings, price: 3950, category: "earrings" },
+  { id: 15, name: "Gold Floral Earrings", image: GoldFloral_Earrings, price: 5599, category: "earrings" },
+  { id: 16, name: "Gold Chained Earrings", image: GoldChained_Earrings, price: 4299, category: "earrings" },
+  { id: 17, name: "Gold & Whitey Earrings", image: Gold_Whitey_Earrings, price: 3200, category: "earrings" },
 ];
 
-const Products = () => {
+const Products = ({ categoryFilter = null }) => {
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
+  const [loadingProductId, setLoadingProductId] = useState(null);
+  const [addedProductId, setAddedProductId] = useState(null);
+
+  // Filter products by category if a filter is provided
+  const filteredProducts = categoryFilter 
+    ? products.filter(product => product.category && product.category === categoryFilter)
+    : products;
+
+  // Reset the added product message after 2 seconds
+  useEffect(() => {
+    if (addedProductId) {
+      const timer = setTimeout(() => {
+        setAddedProductId(null);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [addedProductId]);
+
+  const handleAddToCart = async (product) => {
+    try {
+      setLoadingProductId(product.id);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      addToCart(
+        {
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          category: product.category
+        },
+        1 // Always add 1 item at a time
+      );
+      
+      setAddedProductId(product.id);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    } finally {
+      setLoadingProductId(null);
+    }
+  };
+
   return (
     <section className={styles.productsSection}>
       <div className={styles.sectionDivider} data-aos="fade-up">
-        <span className={styles.productsHeading}>PRODUCTS</span>
+        <span className={styles.productsHeading}>
+          {categoryFilter ? categoryFilter.toUpperCase() : 'PRODUCTS'}
+        </span>
       </div>
 
       <div className={styles.productsGrid}>
-        {products.map((product, index) => (
-          <div
-            key={index}
-            className={styles.productCard}
-            data-aos="fade-up"
-            data-aos-delay={index * 60}
-          >
-            <img
-              src={product.image}
-              alt={product.name}
-              className={styles.productImage}
-            />
+        {filteredProducts.map((product, index) => (
+          <div key={product.id || index} className={styles.productCard} data-aos="fade-up" data-aos-delay={index * 60}>
+            <div className={styles.imageContainer} onClick={() => product.id && navigate(`/product/${product.id}`)}>
+              <img 
+                src={product.image} 
+                alt={product.name} 
+                className={styles.productImage} 
+                loading="lazy"
+              />
+            </div>
             <h3 className={styles.productName}>{product.name}</h3>
-            <p className={styles.productPrice}>R{product.price.toFixed(2)}</p>
-            <button className={styles.addToCartBtn}>Add to Cart</button>
+            <p className={styles.productPrice}>R{(product.price / 100).toFixed(2)}</p>
+            
+            <button 
+              className={`${styles.addToCartBtn} ${
+                loadingProductId === product.id ? styles.loading : ''
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAddToCart(product);
+              }}
+              disabled={loadingProductId === product.id}
+            >
+              {loadingProductId === product.id ? (
+                'Adding...'
+              ) : addedProductId === product.id ? (
+                '✓ Added!'
+              ) : (
+                'Add to Cart'
+              )}
+            </button>
           </div>
         ))}
+        {filteredProducts.length === 0 && (
+          <div className={styles.noProducts}>
+            No products found in this category.
+          </div>
+        )}
       </div>
     </section>
   );

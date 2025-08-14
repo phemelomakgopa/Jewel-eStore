@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import PageTitle from "./components/PageTitle.js";
 import Navbar from "./components/Navbar.jsx";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
+import { CartProvider } from "./contexts/CartContext.jsx";
 import Hero from "./components/Hero.jsx";
 import Categories from "./components/Categories.jsx";
 import Products from "./components/Products.jsx";
@@ -14,6 +15,7 @@ import SignUp from "./components/SignUp.jsx";
 import ForgotPassword from "./components/ForgotPassword.jsx";
 import Cart from "./components/Cart.jsx";
 import Checkout from "./components/Checkout.jsx";
+import OrderHistory from "./components/OrderHistory.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
 import Loader from "./components/Loader.jsx";
 
@@ -31,6 +33,7 @@ function App() {
 
   return (
     <AuthProvider>
+      <CartProvider>
       <Router>
         <PageTitle />
         <div className="app-container">
@@ -58,6 +61,7 @@ function App() {
               <Route path="/forgotpassword" element={<ForgotPassword />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
+              <Route path="/orders" element={<OrderHistory />} />
               <Route path="/adminpanel" element={<AdminPanel />} />
 
               {/* Fallback -> main sections */}
@@ -77,6 +81,7 @@ function App() {
           <Footer />
         </div>
       </Router>
+      </CartProvider>
     </AuthProvider>
   );
 }
