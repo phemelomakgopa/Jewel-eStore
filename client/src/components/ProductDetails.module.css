@@ -1,0 +1,142 @@
+.productPage {
+    background-color: #B6AB99;
+    padding: 2rem 1rem;
+  }
+  
+  .container {
+    max-width: 1100px;
+    margin: auto;
+  }
+  
+  .productMain {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    background-color: #B6AB99;
+    padding: 2rem;
+    border-radius: 10px;
+  }
+  
+  .productImage img {
+    max-width: 400px;
+    width: 100%;
+    border-radius: 10px;
+  }
+  
+  .productInfo {
+    flex: 1;
+    min-width: 280px;
+  }
+  
+  .productName {
+    font-family: 'Mulish', sans-serif;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .productPrice {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .productDescription {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+  
+  .stock {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .stockDot {
+    width: 8px;
+    height: 8px;
+    background: green;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+  }
+  
+  .quantityContainer {
+    margin-bottom: 1rem;
+      width: 100%;
+  }
+  
+  .quantityControls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: auto;
+  }
+  
+  .quantityControls button {
+    padding: 0.2rem 0;
+    width: 2rem; /* Smaller buttons */
+    height: 2rem;
+    display: flex;
+    align-items: left;
+    justify-content: center;
+    border: 1px solid #ddd;
+    background: #f5f5f5;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .addToCartBtn {
+    padding: 0.5rem 1rem;
+    background-color: #5C4033;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    width: auto; /* Let it size to content */
+    min-width: 120px; /* Minimum width */
+  }
+  
+  .addToCartBtn:hover {
+    background-color: #4b332a;
+  }
+  
+  /* Divider */
+  .sectionDivider {
+    display: flex;
+    align-items: center;
+    margin: 3rem 0 1.5rem;
+  }
+  
+  .sectionDivider::before,
+  .sectionDivider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid grey;
+  }
+  
+  .sectionDivider:not(:empty)::before {
+    margin-right: 1rem;
+  }
+  
+  .sectionDivider:not(:empty)::after {
+    margin-left: 1rem;
+  }
+  
+  .sectionDivider span {
+    font-family: 'Livvic', sans-serif;
+    font-size: 20px;
+  }
+  
+  /* Similar Items */
+  .similarItems {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .similarCard img {
+    width: 35%;
+    border-radius: 6px;
+  }
+  

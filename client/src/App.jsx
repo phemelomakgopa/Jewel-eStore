@@ -16,6 +16,7 @@ import Cart from "./components/Cart.jsx";
 import Checkout from "./components/Checkout.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
 import Loader from "./components/Loader.jsx";
+import ProductDetails from "./components/ProductDetails.jsx";
 
 import "./App.css"; // keep your global styles; make sure it doesn't add blur/overlap
 
@@ -59,6 +60,7 @@ function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/adminpanel" element={<AdminPanel />} />
+              <Route path="/product/:id" element={<ProductDetails />} />
 
               {/* Fallback -> main sections */}
               <Route

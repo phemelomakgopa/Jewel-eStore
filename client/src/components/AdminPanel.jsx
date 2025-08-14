@@ -83,123 +83,130 @@ export default function AdminDashboard() {
       ? orders
       : orders.filter((order) => order.status === orderFilter);
 
-  return (
-    <div className={styles.container}>
-      {!loggedIn ? (
-        <div className={styles.screen}>
-          <h1>Admin Login</h1>
-          <input
-            type="password"
-            placeholder="Enter admin password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button className="loginButton" onClick={handleLogin}>
-            Login
-          </button>
-        </div>
-      ) : (
-        <div>
-          <h1 className={styles.dashboardTitle}>Admin Dashboard</h1>
-          <div className={styles.tabButtons}>
-            <button
-              className={`${styles.tabBtn} ${
-                activeTab === "products" ? styles.tabBtnActive : ""
-              }`}
-              onClick={() => setActiveTab("products")}
-            >
-              🛍 Products
-            </button>
-            <button
-              className={`${styles.tabBtn} ${
-                activeTab === "orders" ? styles.tabBtnActive : ""
-              }`}
-              onClick={() => setActiveTab("orders")}
-            >
-              📦 Orders
-            </button>
-          </div>
-
-          {/* Products Tab */}
-          {activeTab === "products" && (
-            <div className={`${styles.tabContent} ${styles.tabContentActive}`}>
-              <h2>Manage Products</h2>
-              <form onSubmit={handleAddProduct}>
-                <input
-                  name="name"
-                  type="text"
-                  placeholder="Product Name"
-                  required
-                />
-                <input
-                  name="desc"
-                  type="text"
-                  placeholder="Description"
-                  required
-                />
-                <input
-                  name="price"
-                  type="number"
-                  placeholder="Price (R)"
-                  required
-                />
-                <input name="images" type="file" multiple />
-                <button type="submit">Add Product</button>
-              </form>
-              <ul>
-                {products.map((p) => (
-                  <li key={p.id}>
-                    <strong>{p.name}</strong> <br />
-                    <small>{p.desc}</small> <br />
-                    <small>{p.price}</small> <br />
-                    <em>{p.imageCount} image(s) uploaded</em> <br />
-                    <button onClick={() => handleDeleteProduct(p.id)}>
-                      🗑 Delete
-                    </button>
-                  </li>
-                ))}
-              </ul>
+      return (
+        <div className={styles.adminContainer}>
+          {!loggedIn ? (
+            <div className={styles.adminLoginScreen}>
+              <h1 className={styles.adminLoginTitle}>Admin Login</h1>
+              <input
+                type="password"
+                placeholder="Enter admin password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={styles.adminInput}
+              />
+              <button className={styles.adminLoginButton} onClick={handleLogin}>
+                Login
+              </button>
+            </div>
+          ) : (
+            <div className={styles.adminContent}>
+              <h1 className={styles.adminDashboardTitle}>Admin Dashboard</h1>
+              <div className={styles.adminTabButtons}>
+                <button
+                  className={`${styles.adminTabBtn} ${
+                    activeTab === "products" ? styles.adminTabBtnActive : ""
+                  }`}
+                  onClick={() => setActiveTab("products")}
+                >
+                  🛍 Products
+                </button>
+                <button
+                  className={`${styles.adminTabBtn} ${
+                    activeTab === "orders" ? styles.adminTabBtnActive : ""
+                  }`}
+                  onClick={() => setActiveTab("orders")}
+                >
+                  📦 Orders
+                </button>
+              </div>
+    
+              {/* Products Tab */}
+              {activeTab === "products" && (
+                <div className={`${styles.adminTabContent} ${styles.adminTabContentActive}`}>
+                  <h2>Manage Products</h2>
+                  <form onSubmit={handleAddProduct} className={styles.adminForm}>
+                    <input
+                      name="name"
+                      type="text"
+                      placeholder="Product Name"
+                      required
+                      className={styles.adminInput}
+                    />
+                    <input
+                      name="desc"
+                      type="text"
+                      placeholder="Description"
+                      required
+                      className={styles.adminInput}
+                    />
+                    <input
+                      name="price"
+                      type="number"
+                      placeholder="Price (R)"
+                      required
+                      className={styles.adminInput}
+                    />
+                    <input name="images" type="file" multiple className={styles.adminFileInput} />
+                    <button type="submit" className={styles.adminSubmitButton}>Add Product</button>
+                  </form>
+                  <ul className={styles.adminList}>
+                    {products.map((p) => (
+                      <li key={p.id} className={styles.adminListItem}>
+                        <strong>{p.name}</strong> <br />
+                        <small>{p.desc}</small> <br />
+                        <small>{p.price}</small> <br />
+                        <em>{p.imageCount} image(s) uploaded</em> <br />
+                        <button 
+                          onClick={() => handleDeleteProduct(p.id)}
+                          className={styles.adminDeleteButton}
+                        >
+                          🗑 Delete
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+    
+              {/* Orders Tab */}
+              {activeTab === "orders" && (
+                <div className={`${styles.adminTabContent} ${styles.adminTabContentActive}`}>
+                  <h2>Customer Orders</h2>
+                  <select
+                    value={orderFilter}
+                    onChange={(e) => setOrderFilter(e.target.value)}
+                    className={styles.adminSelect}
+                  >
+                    <option value="all">All</option>
+                    <option value="pending">Pending</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                  <ul className={styles.adminList}>
+                    {filteredOrders.map((order) => (
+                      <li key={order.id} className={styles.adminListItem}>
+                        <strong>Order #{order.id}</strong> from {order.customer} <br />
+                        Status: {order.status} <br />
+                        <select
+                          value={order.status}
+                          onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                          className={styles.adminSelect}
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="shipped">Shipped</option>
+                          <option value="cancelled">Cancelled</option>
+                          <option value="completed">Completed</option>
+                        </select>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           )}
-
-          {/* Orders Tab */}
-          {activeTab === "orders" && (
-            <div className={`${styles.tabContent} ${styles.tabContentActive}`}>
-              <h2>Customer Orders</h2>
-              <select
-                value={orderFilter}
-                onChange={(e) => setOrderFilter(e.target.value)}
-              >
-                <option value="all">All</option>
-                <option value="pending">Pending</option>
-                <option value="shipped">Shipped</option>
-                <option value="cancelled">Cancelled</option>
-                <option value="completed">Completed</option>
-              </select>
-              <ul>
-                {filteredOrders.map((order) => (
-                  <li key={order.id}>
-                    <strong>Order #{order.id}</strong> from {order.customer}{" "}
-                    <br />
-                    Status: {order.status} <br />
-                    <select
-                      value={order.status}
-                      onChange={(e) =>
-                        updateOrderStatus(order.id, e.target.value)
-                      }
-                    >
-                      <option value="pending">Pending</option>
-                      <option value="shipped">Shipped</option>
-                      <option value="cancelled">Cancelled</option>
-                      <option value="completed">Completed</option>
-                    </select>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
-      )}
-    </div>
-  );
-}
+      );
+    }
+    

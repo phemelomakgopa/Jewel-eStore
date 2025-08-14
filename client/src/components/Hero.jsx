@@ -7,6 +7,7 @@ const Hero = ({ shrink }) => {
   return (
     <section className={`${styles.heroSection} ${shrink ? styles.heroShrink : ""}`}>
       <div className={styles.imageLeft}></div>
+      <div className={styles.imageMiddle}></div>
       <div className={styles.imageRight}></div>
 
       <div className={styles.contentContainer}>

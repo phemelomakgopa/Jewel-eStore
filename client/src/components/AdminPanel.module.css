@@ -1,31 +1,29 @@
-.body {
+/* Admin Panel Container */
+.adminContainer {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #FFF8F0;
   color: #5C3D2E;
-  margin: 0;
-  padding: 0;
-}
-
-.container {
   max-width: 900px;
   margin: auto;
   padding: 2rem;
 }
 
-.screen {
+/* Login Screen */
+.adminLoginScreen {
   text-align: center;
   padding: 100px 20px;
 }
 
-.hidden {
-  display: none;
+.adminLoginTitle {
+  color: #5C3D2E;
+  margin-bottom: 1.5rem;
 }
 
-
-
-input,
-button,
-select {
+/* Input Fields */
+.adminInput,
+.adminSelect,
+.adminLoginButton,
+.adminSubmitButton {
   display: block;
   margin: 1rem auto;
   padding: 0.7rem;
@@ -38,12 +36,17 @@ select {
   color: #5C3D2E;
 }
 
-input[type="file"] {
+.adminFileInput {
+  display: block;
+  margin: 1rem auto;
+  width: 80%;
+  max-width: 400px;
   background-color: transparent;
   color: #5C3D2E;
 }
 
-.loginButton {
+/* Buttons */
+.adminLoginButton {
   background: linear-gradient(to right, #FFA987, #FFE066);
   color: #5C3D2E;
   font-weight: bold;
@@ -51,20 +54,23 @@ input[type="file"] {
   transition: background 0.3s ease;
 }
 
-button:hover {
-  /*background: linear-gradient(to right, #2d170c, brown);*/
-  background: none;
+.adminLoginButton:hover,
+.adminSubmitButton:hover,
+.adminTabBtn:hover,
+.adminDeleteButton:hover {
   transform: translateY(-2px);
 }
 
-.dashboardTitle {
+/* Dashboard Content */
+.adminDashboardTitle {
   text-align: center;
   font-size: 2.5rem;
   color: #FF8B5E;
   margin-bottom: 2rem;
 }
 
-.tabButtons {
+/* Tabs */
+.adminTabButtons {
   display: flex;
   justify-content: center;
   gap: 1rem;
@@ -72,7 +78,7 @@ button:hover {
   flex-wrap: wrap;
 }
 
-.tabBtn {
+.adminTabBtn {
   background-color: #FFD9C0;
   color: #5C3D2E;
   padding: 0.75rem 1.5rem;
@@ -83,16 +89,17 @@ button:hover {
   transition: background-color 0.3s;
 }
 
-.tabBtn:hover {
+.adminTabBtn:hover {
   background-color: #FFBC97;
 }
 
-.tabBtnActive {
+.adminTabBtnActive {
   background-color: #FFA987;
   color: white;
 }
 
-.tabContent {
+/* Tab Content */
+.adminTabContent {
   display: none;
   background-color: #FFF2E0;
   padding: 1.5rem;
@@ -100,16 +107,17 @@ button:hover {
   box-shadow: 0 4px 8px rgba(255, 168, 135, 0.2);
 }
 
-.tabContentActive {
+.adminTabContentActive {
   display: block;
 }
 
-ul {
+/* Lists */
+.adminList {
   list-style: none;
   padding: 0;
 }
 
-li {
+.adminListItem {
   background: #FFF0E5;
   padding: 1rem;
   margin: 0.5rem 0;
@@ -117,7 +125,7 @@ li {
   box-shadow: 0 2px 6px rgba(255, 137, 106, 0.15);
 }
 
-li button {
+.adminDeleteButton {
   background-color: #FFA987;
   color: white;
   padding: 0.4rem 0.8rem;
@@ -128,38 +136,45 @@ li button {
   cursor: pointer;
 }
 
-li button:hover {
+.adminDeleteButton:hover {
   background-color: #FF8B5E;
 }
 
+/* Form */
+.adminForm {
+  margin-bottom: 2rem;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .container {
+  .adminContainer {
     padding: 1rem;
   }
 
-  .tabButtons {
+  .adminTabButtons {
     flex-direction: column;
     gap: 0.5rem;
   }
 
-  .tabBtn {
+  .adminTabBtn {
     width: 100%;
     text-align: center;
     font-size: 1rem;
   }
 
-  input,
-  select,
-  button {
+  .adminInput,
+  .adminSelect,
+  .adminLoginButton,
+  .adminSubmitButton {
     width: 90%;
     font-size: 0.95rem;
   }
 
-  .dashboardTitle {
+  .adminDashboardTitle {
     font-size: 2rem;
   }
 
-  li {
+  .adminListItem {
     font-size: 0.95rem;
   }
 }

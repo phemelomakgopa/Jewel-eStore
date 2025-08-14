@@ -68,7 +68,7 @@
   padding: 1rem;
   text-align: left;
   cursor: pointer;
-
+  text-decoration: none;
   /* pop-up animation */
   will-change: transform, box-shadow;
   transition: transform 0.25s ease, box-shadow 0.25s ease;

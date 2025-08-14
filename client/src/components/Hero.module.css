@@ -10,30 +10,41 @@
   overflow: hidden;
   padding: 2rem;
 }
+
 .heroShrink {
   transform: scale(0.95);
   filter: blur(3px);
   transition: transform 0.5s ease, filter 0.5s ease;
 }
-/* Background images */
-.imageLeft {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 50%;
-  height: 100%;
-  background: url('../assets/Jewel_Model.jpg') center/cover no-repeat; 
-  z-index: 1;
-}
 
+/* Background images */
+.imageLeft,
+.imageMiddle,
 .imageRight {
   position: absolute;
   top: 0;
-  right: 0;
-  width: 50%;
   height: 100%;
-  background: url('../assets/PearlStone_Ring.jpg') center/cover no-repeat;
-  z-index: 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.imageLeft {
+  left: 0;
+  width: 35%;
+  background-image: url('../assets/IMG-20250813-WA0018.jpg');
+}
+
+.imageMiddle {
+  left: 35%;
+  width: 30%;
+  background-image: url('../assets/PearlStone_Ring.jpg');
+}
+
+.imageRight {
+  right: 0;
+  width: 35%;
+  background-image: url('../assets/Jewel_Model.jpg');
 }
 
 /* Overlay content */
@@ -42,7 +53,6 @@
   z-index: 2;
   max-width: 800px;
   text-align: center;
-  background: none;
   padding: 2rem 3rem;
   border-radius: 1rem;
   -webkit-backdrop-filter: blur(10px);
@@ -50,7 +60,6 @@
   animation: fadeIn 1.2s ease-out forwards;
 }
 
-/* Heading */
 .heroHeading {
   font-family: 'Italiana', serif;
   font-size: 2rem;
@@ -69,12 +78,13 @@
   font-weight: 500;
   transition: all 0.3s ease;
   border: none;
+  width: 45%;
   cursor: pointer;
   animation: fadeInUp 0.8s ease-out 0.5s both;
 }
 
 .shopNowButton:hover {
-  background-color: #333;
+  background-color: #3a3535;
   transform: scale(1.05);
 }
 
@@ -106,17 +116,11 @@
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive Design Enhancements */
+/* Responsive */
 @media (min-width: 768px) {
   .heroHeading {
     font-size: 2.5rem;
@@ -124,9 +128,15 @@
 }
 
 @media (max-width: 768px) {
+  .imageLeft, .imageMiddle, .imageRight {
+    width: 100%;
+    left: 0;
+    right: 0;
+    opacity: 0.3;
+  }
+  
   .heroHeading {
     font-size: 1.8rem;
-    animation: textFocusInMobile 1s ease-out 0.3s both;
   }
   
   .contentContainer {
@@ -139,15 +149,3 @@
     font-size: 0.9rem;
   }
 }
-
-@keyframes textFocusInMobile {
-  0% {
-    filter: blur(8px);
-    opacity: 0;
-  }
-  100% {
-    filter: blur(0);
-    opacity: 1;
-  }
-}
-

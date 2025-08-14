@@ -32,7 +32,7 @@ const AboutContact = () => {
         <h3 className={styles.contactHeading}>Find Us</h3>
         <div className={styles.socialLinks}>
           <a href="https://youtube.com" target="_blank" rel="noreferrer"><FaYoutube /></a>
-          <a href="https://facebook.com/owkShaun" target="_blank" rel="noreferrer"><FaFacebook /></a>
+          <a href="https://facebook.com/owkShaun.makgopa" target="_blank" rel="noreferrer"><FaFacebook /></a>
           <a href="https://instagram.com/shaun.forty7" target="_blank" rel="noreferrer"><FaInstagram /></a>
         </div>
       </div>

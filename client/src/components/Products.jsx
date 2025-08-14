@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom"
 import styles from "./Products.module.css";
 
 // images
@@ -49,7 +50,8 @@ const Products = () => {
 
       <div className={styles.productsGrid}>
         {products.map((product, index) => (
-          <div
+          <Link
+            to={`/product/${index + 1}`}
             key={index}
             className={styles.productCard}
             data-aos="fade-up"
@@ -63,7 +65,7 @@ const Products = () => {
             <h3 className={styles.productName}>{product.name}</h3>
             <p className={styles.productPrice}>R{product.price.toFixed(2)}</p>
             <button className={styles.addToCartBtn}>Add to Cart</button>
-          </div>
+          </Link>
         ))}
       </div>
     </section>

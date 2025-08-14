@@ -1,7 +1,8 @@
 .categoriesSection {
-  background-color: #B6AB99;
+  background-color: beige;
   padding: 3rem 1rem 8rem; 
   text-align: center;
+  height: 18vh;
 }
 
 /* Divider with text in middle */

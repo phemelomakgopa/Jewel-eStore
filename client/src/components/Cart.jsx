@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./Cart.css";
+import Flat_Pearls_Bracelet from "../assets/Flat_Pearls_Bracelet.jpg";
+import GearDiamond_Gold_Ring from "../assets/GearDiamond+Gold_Ring.jpg";
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -9,17 +11,17 @@ export default function Cart() {
   const cartItems = [
     {
       id: 1,
-      name: "Gold Ring",
+      name: "Pearl Bracelet",
       price: 299.0,
       quantity: 1,
-      image: "../public/images/Gold+Diamond_Ring.jpg",
+      image: Flat_Pearls_Bracelet
     },
     {
       id: 2,
-      name: "Pearl Necklace",
+      name: "Diamong & Gold Ring",
       price: 499.0,
       quantity: 2,
-      image: "../public/images/Gold_Necklaces.jpg",
+      image: GearDiamond_Gold_Ring
 
     },
   ];
