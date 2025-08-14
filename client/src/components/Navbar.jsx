@@ -1,15 +1,12 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import styles from './Navbar.module.css'; // Import the CSS Module
+import React from "react";
+import styles from "./Navbar.module.css"; // Import the CSS Module
+import { useAuth } from "../contexts/AuthContext";
+import UserProfile from "./UserProfile";
 
-import { FaShoppingCart, FaUserCircle } from 'react-icons/fa';
+import { FaShoppingCart, FaUserCircle } from "react-icons/fa";
 
 const Navbar = () => {
-  const navigate = useNavigate(); // Initialize the navigate function
-
-  const handleSignInClick = () => {
-    navigate('/signin'); // Programmatically navigate to signin page
-  };
+  const { currentUser } = useAuth();
 
   return (
     <nav className={styles.navbar}>
@@ -21,31 +18,44 @@ const Navbar = () => {
 
         {/* Navigation Links (Desktop) */}
         <div className={styles.navLinksDesktop}>
-          <a href="/" className={styles.navLink}>Home</a>
-          <a href="/about" className={styles.navLink}>About</a>
-          <a href="/products" className={styles.navLink}>Products</a>
-          <a href="/contact" className={styles.navLink}>Contact</a>
+          <a href="/" className={styles.navLink}>
+            Home
+          </a>
+          <a href="/about" className={styles.navLink}>
+            About
+          </a>
+          <a href="/products" className={styles.navLink}>
+            Products
+          </a>
+          <a href="/contact" className={styles.navLink}>
+            Contact
+          </a>
         </div>
 
         {/* Action Buttons (Desktop) */}
         <div className={styles.actionButtonsDesktop}>
-          <a href="/signin" className={styles.signInLink}>SIGN IN</a>
+          {!currentUser ? (
+            <a href="/signin" className={styles.signInLink}>
+              SIGN IN
+            </a>
+          ) : null}
+
           <a href="/cart" className={styles.cartButton}>
-          <FaShoppingCart className={styles.cartIcon} />
+            <FaShoppingCart className={styles.cartIcon} />
           </a>
 
-          <FaUserCircle className={styles.userIcon} />
-
+          {currentUser ? (
+            <UserProfile />
+          ) : (
+            <FaUserCircle className={styles.userIcon} />
+          )}
         </div>
-
-       
       </div>
     </nav>
   );
 };
 
 // src/components/Navbar.jsx
-
 
 export default Navbar;
 
