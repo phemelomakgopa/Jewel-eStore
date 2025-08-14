@@ -1,6 +1,6 @@
 .categoriesSection {
-  background-color: #B6AB99; /* Same bg as homepage */
-  padding: 3rem 1rem;
+  background-color: #B6AB99;
+  padding: 3rem 1rem 8rem; 
   text-align: center;
 }
 
@@ -16,7 +16,7 @@
 .sectionDivider::after {
   content: "";
   flex: 1;
-  border-bottom: 1px solid #000; /* Line color */
+  border-bottom: 1px solid grey; /* Line color */
 }
 
 .sectionDivider:not(:empty)::before {
@@ -29,7 +29,7 @@
 
 .categoriesHeading {
   font-family: 'Livvic', sans-serif;
-  font-size: 30px;
+  font-size: 24px;
   font-weight: normal;
   color: #000;
 }
@@ -45,20 +45,21 @@
 .categoryItem {
   width: 180px;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
-  
+  position: relative;
+  overflow: hidden;
+  border-radius: 0px;
   /* Animation */
   opacity: 0;
   transform: translateY(20px);
   animation: fadeUp 0.6s ease forwards;
 }
 
-/* Animate each card with a delay based on index */
 .categoryItem:nth-child(1) { animation-delay: 0.1s; }
 .categoryItem:nth-child(2) { animation-delay: 0.2s; }
 .categoryItem:nth-child(3) { animation-delay: 0.3s; }
 .categoryItem:nth-child(4) { animation-delay: 0.4s; }
 .categoryItem:nth-child(5) { animation-delay: 0.5s; }
+.categoryItem:nth-child(6) { animation-delay: 0.6s; }
 
 @keyframes fadeUp {
   to {
@@ -67,30 +68,27 @@
   }
 }
 
-.categoryItem:hover {
-  transform: translateY(-8px) scale(1.05); 
-  box-shadow: 0 12px 20px rgba(0,0,0,0.2); /* Deeper shadow */
-  border: 1px solid grey;
-  z-index: 10; /* Ensures card lifts above others */
-  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 1.5), 
-              box-shadow 0.3s ease,
-              border 0.3s ease; /* Bouncy animation */
-}
-
-/* Category image */
+/* Image Zoom Effect */
 .categoryImage {
   width: 100%;
   height: 180px;
   object-fit: cover;
-  border-radius: 0px;
+  transition: transform 0.4s ease;
 }
 
-/* Category text */
+.categoryItem:hover .categoryImage {
+  transform: scale(1.1);
+}
+
+/* Category text overlay */
 .categoryText {
-  margin-top: 0.8rem;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
   font-family: 'Mulish', sans-serif;
   font-size: 20px;
-  text-align: left;
   font-weight: normal;
-  color: #000000; 
+  color: white;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
+  z-index: 2;
 }

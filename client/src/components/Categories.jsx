@@ -14,32 +14,39 @@ const categories = [
   { name: 'NECKLACES', image: necklacesImg },
   { name: 'BRACELETS', image: braceletsImg },
   { name: 'EARRINGS', image: earringsImg },
-  { name: 'ANKELETS', image: ankletsImg },
+  { name: 'ANKLETS', image: ankletsImg },
 ];
 
 const Categories = () => {
   return (
     <section className={styles.categoriesSection}>
-      
       {/* Divider Line with Text */}
-      <div className={styles.sectionDivider}>
+      <div className={styles.sectionDivider} data-aos="fade-up">
         <span className={styles.categoriesHeading}>CATEGORIES</span>
       </div>
 
       {/* Categories List */}
       <div className={styles.categoryList}>
         {categories.map((category, index) => (
-          <div key={index} className={styles.categoryItem}>
-            <img 
-              src={category.image} 
-              alt={category.name} 
-              className={styles.categoryImage} 
-            />
-            <p className={styles.categoryText}>{category.name}</p>
+          <div
+            key={index}
+            className={styles.categoryItem}
+            data-aos="fade-up"
+            data-aos-delay={index * 80}
+          >
+            <div className={styles.categoryCard}>
+              <img
+                src={category.image}
+                alt={category.name}
+                className={styles.categoryImage}
+              />
+              <div className={styles.categoryOverlay}>
+                <span className={styles.categoryText}>{category.name}</span>
+              </div>
+            </div>
           </div>
         ))}
       </div>
-
     </section>
   );
 };

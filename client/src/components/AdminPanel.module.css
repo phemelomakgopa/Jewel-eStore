@@ -52,7 +52,9 @@ input[type="file"] {
 }
 
 button:hover {
-  background: linear-gradient(to right, #FFBC97, #FFD97E);
+  /*background: linear-gradient(to right, #2d170c, brown);*/
+  background: none;
+  transform: translateY(-2px);
 }
 
 .dashboardTitle {

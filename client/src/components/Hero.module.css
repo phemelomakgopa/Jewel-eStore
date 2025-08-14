@@ -10,7 +10,11 @@
   overflow: hidden;
   padding: 2rem;
 }
-
+.heroShrink {
+  transform: scale(0.95);
+  filter: blur(3px);
+  transition: transform 0.5s ease, filter 0.5s ease;
+}
 /* Background images */
 .imageLeft {
   position: absolute;
@@ -145,3 +149,4 @@
     opacity: 1;
   }
 }
+
