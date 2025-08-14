@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import './StripePaymentForm.css';
 
-const StripePaymentForm = ({ amount, onSuccessfulPayment }) => {
+const StripePaymentForm = ({ amount: initialAmount, onSuccessfulPayment }) => {
+  const amount = Math.round(initialAmount * 100) / 100;
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState(null);

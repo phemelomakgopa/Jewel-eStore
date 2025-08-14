@@ -110,55 +110,59 @@ export const CartProvider = ({ children }) => {
     setDiscountError('');
   };
 
-  const subtotal = useMemo(
-    () => items.reduce((sum, i) => sum + i.price * i.quantity, 0),
-    [items]
-  );
+    const subtotal = useMemo(() => {
+    const amountInCents = items.reduce((sum, i) => sum + Math.round(i.price * 100) * i.quantity, 0);
+    return amountInCents / 100;
+  }, [items]);
 
   const discount = useMemo(() => {
     if (!appliedDiscount) return { amount: 0, type: 'none' };
-    
-    let amount = 0;
-    const code = appliedDiscount.code.toUpperCase();
-    const discountInfo = DISCOUNT_CODES[code];
-    
-    if (!discountInfo) return { amount: 0, type: 'none' };
-    
-    if (subtotal < discountInfo.minPurchase) {
-      return { 
-        amount: 0, 
-        type: 'none',
-        error: `Minimum purchase of $${discountInfo.minPurchase} required for this code`
-      };
+
+    const subtotalInCents = Math.round(subtotal * 100);
+    const discountInfo = DISCOUNT_CODES[appliedDiscount.code.toUpperCase()];
+
+    if (!discountInfo || subtotal < discountInfo.minPurchase) {
+      return { amount: 0, type: 'none' };
     }
-    
-    if (discountInfo.type === 'percentage') {
-      amount = subtotal * (discountInfo.value / 100);
-    } else if (discountInfo.type === 'fixed') {
-      amount = Math.min(discountInfo.value, subtotal);
-    } else if (discountInfo.type === 'shipping') {
+
+    if (discountInfo.type === 'shipping') {
       return { amount: 0, type: 'shipping', shippingDiscount: true };
     }
-    
-    return { amount, type: discountInfo.type };
+
+    let amountInCents = 0;
+    if (discountInfo.type === 'percentage') {
+      amountInCents = Math.round(subtotalInCents * (discountInfo.value / 100));
+    } else if (discountInfo.type === 'fixed') {
+      amountInCents = Math.min(Math.round(discountInfo.value * 100), subtotalInCents);
+    }
+
+    return { amount: amountInCents / 100, type: discountInfo.type };
   }, [appliedDiscount, subtotal]);
 
   const shipping = useMemo(() => {
-    const baseShipping = subtotal > 0 ? 60 : 0; // $60 flat rate shipping
+    if (subtotal === 0) return 0;
     if (appliedDiscount && DISCOUNT_CODES[appliedDiscount.code]?.type === 'shipping') {
       return 0; // Free shipping
     }
-    return baseShipping;
+    return 60.00; // R60 flat rate shipping
   }, [subtotal, appliedDiscount]);
 
   const tax = useMemo(() => {
-    const taxableAmount = Math.max(0, subtotal - (discount.type === 'percentage' || discount.type === 'fixed' ? discount.amount : 0));
-    return taxableAmount * 0.15; // 15% tax
+    const subtotalInCents = Math.round(subtotal * 100);
+    const discountInCents = Math.round(discount.amount * 100);
+    const taxableAmountInCents = Math.max(0, subtotalInCents - discountInCents);
+    const taxInCents = Math.round(taxableAmountInCents * 0.15);
+    return taxInCents / 100;
   }, [subtotal, discount]);
 
   const total = useMemo(() => {
-    const discountedSubtotal = subtotal - (discount.type === 'percentage' || discount.type === 'fixed' ? discount.amount : 0);
-    return Math.max(0, discountedSubtotal + shipping + tax);
+    const subtotalInCents = Math.round(subtotal * 100);
+    const discountInCents = Math.round(discount.amount * 100);
+    const shippingInCents = Math.round(shipping * 100);
+    const taxInCents = Math.round(tax * 100);
+    
+    const totalInCents = Math.max(0, subtotalInCents - discountInCents + shippingInCents + taxInCents);
+    return totalInCents / 100;
   }, [subtotal, discount, shipping, tax]);
 
   const value = {

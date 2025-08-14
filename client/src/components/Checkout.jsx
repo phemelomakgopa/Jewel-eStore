@@ -5,24 +5,20 @@ import { useAuth } from "../contexts/AuthContext";
 import ShippingAddressForm from "./ShippingAddressForm";
 import StripePaymentForm from "./StripePaymentForm";
 import "./Checkout.css";
-import emailjs from '@emailjs/browser';
+import emailjs from "@emailjs/browser";
 
 export default function Checkout() {
   const navigate = useNavigate();
   const { items, subtotal, shipping, tax, total, clearCart } = useCart();
-  const { 
-    currentUser, 
-    userProfile, 
-    updateShippingAddress, 
-    createOrder 
-  } = useAuth();
+  const { currentUser, userProfile, updateShippingAddress, createOrder } =
+    useAuth();
 
   const [payment, setPayment] = useState({
     method: "card", // card, eft, instant_eft
     bankName: "",
     accountType: "cheque", // cheque, savings
   });
-  
+
   const [savingOrder, setSavingOrder] = useState(false);
   const [address, setAddress] = useState(null);
   const [error, setError] = useState("");
@@ -49,24 +45,24 @@ export default function Checkout() {
 
   const handlePaymentChange = (e) => {
     const { name, value } = e.target;
-    setPayment(prev => ({
+    setPayment((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const formatCardNumber = (value) => {
     return value
-      .replace(/\D/g, '')
-      .replace(/(\d{4})/g, '$1 ')
+      .replace(/\D/g, "")
+      .replace(/(\d{4})/g, "$1 ")
       .trim()
       .substring(0, 19);
   };
 
   const formatExpiryDate = (value) => {
     return value
-      .replace(/\D/g, '')
-      .replace(/(\d{2})(\d{1,2})/, '$1/$2')
+      .replace(/\D/g, "")
+      .replace(/(\d{2})(\d{1,2})/, "$1/$2")
       .substring(0, 5);
   };
 
@@ -90,7 +86,7 @@ export default function Checkout() {
           total,
         },
         payment: {
-          method: 'card',
+          method: "card",
           stripePaymentId: paymentIntentId,
         },
       };
@@ -100,7 +96,7 @@ export default function Checkout() {
       sendOrderConfirmationEmail({
         orderId: order.id,
         customer: {
-          name: currentUser.displayName || 'Valued Customer',
+          name: currentUser.displayName || "Valued Customer",
           email: currentUser.email,
         },
         ...order,
@@ -112,7 +108,10 @@ export default function Checkout() {
       setActiveStep(3);
     } catch (err) {
       console.error("Order creation error:", err);
-      setError(err.message || "Failed to save order after payment. Please contact support.");
+      setError(
+        err.message ||
+          "Failed to save order after payment. Please contact support."
+      );
     } finally {
       setSavingOrder(false);
     }
@@ -126,11 +125,11 @@ export default function Checkout() {
   };
 
   const getCardBrand = (cardNumber) => {
-    const num = cardNumber.replace(/\s+/g, '');
-    if (/^4/.test(num)) return 'visa';
-    if (/^5[1-5]/.test(num)) return 'mastercard';
-    if (/^3[47]/.test(num)) return 'amex';
-    return 'unknown';
+    const num = cardNumber.replace(/\s+/g, "");
+    if (/^4/.test(num)) return "visa";
+    if (/^5[1-5]/.test(num)) return "mastercard";
+    if (/^3[47]/.test(num)) return "amex";
+    return "unknown";
   };
 
   const sendOrderConfirmationEmail = (orderDetails) => {
@@ -141,22 +140,33 @@ export default function Checkout() {
       order_date: new Date(orderDetails.createdAt).toLocaleDateString(),
       total_amount: `R ${orderDetails.amounts.total.toFixed(2)}`,
       shipping_address: `${orderDetails.shippingAddress.street}, ${orderDetails.shippingAddress.suburb}, ${orderDetails.shippingAddress.city}, ${orderDetails.shippingAddress.province}, ${orderDetails.shippingAddress.postalCode}`,
-      items: orderDetails.items.map(item => `${item.name} (x${item.quantity}) - R ${item.price.toFixed(2)}`).join('\n'),
+      items: orderDetails.items
+        .map(
+          (item) =>
+            `${item.name} (x${item.quantity}) - R ${item.price.toFixed(2)}`
+        )
+        .join("\n"),
     };
 
     // Replace with your actual EmailJS Service ID, Template ID, and Public Key
-    const SERVICE_ID = 'YOUR_SERVICE_ID';
-    const TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
-    const PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+    const SERVICE_ID = "service_pq8uw3p";
+    const TEMPLATE_ID = "template_tdfvjye";
+    const PUBLIC_KEY = "tD9Eu4EUpfDHjUo6X";
 
-    emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
-      .then((response) => {
-        console.log('SUCCESS!', response.status, response.text);
-        alert(`A confirmation email has been sent to ${orderDetails.customer.email}.`);
-      }, (err) => {
-        console.error('FAILED...', err);
-        alert('Failed to send confirmation email. Please check your order history.');
-      });
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY).then(
+      (response) => {
+        console.log("SUCCESS!", response.status, response.text);
+        alert(
+          `A confirmation email has been sent to ${orderDetails.customer.email}.`
+        );
+      },
+      (err) => {
+        console.error("FAILED...", err);
+        alert(
+          "Failed to send confirmation email. Please check your order history."
+        );
+      }
+    );
   };
 
   if (!currentUser) {
@@ -165,8 +175,8 @@ export default function Checkout() {
         <div className="auth-required">
           <h2>Sign In Required</h2>
           <p>Please sign in to proceed to checkout.</p>
-          <button 
-            onClick={() => navigate('/login', { state: { from: '/checkout' } })}
+          <button
+            onClick={() => navigate("/login", { state: { from: "/checkout" } })}
             className="btn btn-primary"
           >
             Sign In
@@ -182,17 +192,16 @@ export default function Checkout() {
         <div className="order-success">
           <div className="success-icon">✓</div>
           <h2>Order Placed Successfully!</h2>
-          <p>Your order ID is: <strong>{orderId}</strong></p>
+          <p>
+            Your order ID is: <strong>{orderId}</strong>
+          </p>
           <p>We've sent a confirmation email to {currentUser.email}</p>
           <div className="order-actions">
-            <button 
-              onClick={() => navigate('/')} 
-              className="btn btn-secondary"
-            >
+            <button onClick={() => navigate("/")} className="btn btn-secondary">
               Continue Shopping
             </button>
-            <button 
-              onClick={() => navigate('/orders')} 
+            <button
+              onClick={() => navigate("/orders")}
               className="btn btn-primary"
             >
               View Orders
@@ -209,8 +218,8 @@ export default function Checkout() {
         <div className="empty-cart">
           <h2>Your cart is empty</h2>
           <p>Add some items to your cart before checking out.</p>
-          <button 
-            onClick={() => navigate('/products')} 
+          <button
+            onClick={() => navigate("/products")}
             className="btn btn-primary"
           >
             Browse Products
@@ -223,17 +232,21 @@ export default function Checkout() {
   return (
     <div className="checkout-container">
       <div className="checkout-steps">
-        <div className={`step ${activeStep >= 1 ? 'active' : ''}`}>
+        <div className={`step ${activeStep >= 1 ? "active" : ""}`}>
           <div className="step-number">1</div>
           <div className="step-label">Shipping</div>
         </div>
-        <div className={`step-connector ${activeStep >= 2 ? 'active' : ''}`}></div>
-        <div className={`step ${activeStep >= 2 ? 'active' : ''}`}>
+        <div
+          className={`step-connector ${activeStep >= 2 ? "active" : ""}`}
+        ></div>
+        <div className={`step ${activeStep >= 2 ? "active" : ""}`}>
           <div className="step-number">2</div>
           <div className="step-label">Payment</div>
         </div>
-        <div className={`step-connector ${activeStep >= 3 ? 'active' : ''}`}></div>
-        <div className={`step ${activeStep >= 3 ? 'active' : ''}`}>
+        <div
+          className={`step-connector ${activeStep >= 3 ? "active" : ""}`}
+        ></div>
+        <div className={`step ${activeStep >= 3 ? "active" : ""}`}>
           <div className="step-number">3</div>
           <div className="step-label">Confirmation</div>
         </div>
@@ -244,17 +257,17 @@ export default function Checkout() {
           {activeStep === 1 && (
             <div className="shipping-section">
               <h2>Shipping Address</h2>
-              <ShippingAddressForm 
-                initialData={address} 
-                onSave={handleAddressSave} 
+              <ShippingAddressForm
+                initialData={address}
+                onSave={handleAddressSave}
               />
               {error && <div className="error-message">{error}</div>}
-              
+
               <div className="form-actions">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-secondary"
-                  onClick={() => navigate('/cart')}
+                  onClick={() => navigate("/cart")}
                 >
                   Back to Cart
                 </button>
@@ -275,7 +288,9 @@ export default function Checkout() {
                       name="paymentMethod"
                       value="card"
                       checked={payment.method === "card"}
-                      onChange={(e) => setPayment(p => ({ ...p, method: e.target.value }))}
+                      onChange={(e) =>
+                        setPayment((p) => ({ ...p, method: e.target.value }))
+                      }
                     />
                     <label htmlFor="card" className="payment-label">
                       <div className="payment-icon">💳</div>
@@ -293,7 +308,9 @@ export default function Checkout() {
                       name="paymentMethod"
                       value="instant_eft"
                       checked={payment.method === "instant_eft"}
-                      onChange={(e) => setPayment(p => ({ ...p, method: e.target.value }))}
+                      onChange={(e) =>
+                        setPayment((p) => ({ ...p, method: e.target.value }))
+                      }
                     />
                     <label htmlFor="instant_eft" className="payment-label">
                       <div className="payment-icon">⚡</div>
@@ -311,7 +328,9 @@ export default function Checkout() {
                       name="paymentMethod"
                       value="eft"
                       checked={payment.method === "eft"}
-                      onChange={(e) => setPayment(p => ({ ...p, method: e.target.value }))}
+                      onChange={(e) =>
+                        setPayment((p) => ({ ...p, method: e.target.value }))
+                      }
                     />
                     <label htmlFor="eft" className="payment-label">
                       <div className="payment-icon">🏦</div>
@@ -325,9 +344,9 @@ export default function Checkout() {
 
                 {/* Card Payment Form */}
                 {payment.method === "card" && (
-                  <StripePaymentForm 
-                    amount={total} 
-                    onSuccessfulPayment={handleSuccessfulPayment} 
+                  <StripePaymentForm
+                    amount={Math.round(total * 100) / 100}
+                    onSuccessfulPayment={handleSuccessfulPayment}
                   />
                 )}
 
@@ -381,15 +400,30 @@ export default function Checkout() {
                     <div className="eft-instructions">
                       <h4>Bank Transfer Details:</h4>
                       <div className="bank-details">
-                        <p><strong>Bank:</strong> First National Bank</p>
-                        <p><strong>Account Name:</strong> Jewel eStore</p>
-                        <p><strong>Account Number:</strong> 1234567890</p>
-                        <p><strong>Branch Code:</strong> 250655</p>
-                        <p><strong>Reference:</strong> Your Order Number</p>
+                        <p>
+                          <strong>Bank:</strong> First National Bank
+                        </p>
+                        <p>
+                          <strong>Account Name:</strong> Jewel eStore
+                        </p>
+                        <p>
+                          <strong>Account Number:</strong> 1234567890
+                        </p>
+                        <p>
+                          <strong>Branch Code:</strong> 250655
+                        </p>
+                        <p>
+                          <strong>Reference:</strong> Your Order Number
+                        </p>
                       </div>
                       <div className="eft-note">
-                        <p>⚠️ Please use your order number as the payment reference</p>
-                        <p>📧 Email proof of payment to orders@jewelestore.co.za</p>
+                        <p>
+                          ⚠️ Please use your order number as the payment
+                          reference
+                        </p>
+                        <p>
+                          📧 Email proof of payment to orders@jewelestore.co.za
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -398,31 +432,27 @@ export default function Checkout() {
                 <div className="billing-address">
                   <h3>Billing Address</h3>
                   <label className="checkbox-label">
-                    <input 
-                      type="checkbox" 
-                      checked={true} 
-                      onChange={() => {}}
-                    />
+                    <input type="checkbox" checked={true} onChange={() => {}} />
                     Same as shipping address
                   </label>
                 </div>
 
                 <div className="form-actions">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="btn btn-secondary"
                     onClick={() => setActiveStep(1)}
                   >
                     Back
                   </button>
-                  {payment.method !== 'card' && (
-                    <button 
-                      type="button" 
+                  {payment.method !== "card" && (
+                    <button
+                      type="button"
                       className="btn btn-primary"
                       onClick={handlePlaceOrder}
                       disabled={savingOrder}
                     >
-                      {savingOrder ? 'Placing Order...' : 'Place Order'}
+                      {savingOrder ? "Placing Order..." : "Place Order"}
                     </button>
                   )}
                 </div>
@@ -438,11 +468,18 @@ export default function Checkout() {
               </div>
               <h2>Order Placed Successfully!</h2>
               <div className="order-details">
-                <p><strong>Order ID:</strong> {orderId}</p>
-                <p><strong>Email:</strong> Confirmation sent to {address?.email || currentUser?.email}</p>
-                <p><strong>Total:</strong> R{(total / 100).toFixed(2)}</p>
+                <p>
+                  <strong>Order ID:</strong> {orderId}
+                </p>
+                <p>
+                  <strong>Email:</strong> Confirmation sent to{" "}
+                  {address?.email || currentUser?.email}
+                </p>
+                <p>
+                  <strong>Total:</strong> R{(total / 100).toFixed(2)}
+                </p>
               </div>
-              
+
               <div className="next-steps">
                 <h3>What's Next?</h3>
                 <ul>
@@ -453,15 +490,15 @@ export default function Checkout() {
               </div>
 
               <div className="order-actions">
-                <button 
+                <button
                   className="btn btn-primary"
-                  onClick={() => navigate('/orders')}
+                  onClick={() => navigate("/orders")}
                 >
                   View My Orders
                 </button>
-                <button 
+                <button
                   className="btn btn-secondary"
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate("/")}
                 >
                   Continue Shopping
                 </button>

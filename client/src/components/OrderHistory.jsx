@@ -12,7 +12,10 @@ export default function OrderHistory() {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      if (!currentUser) return;
+      if (!currentUser) {
+        setLoading(false);
+        return;
+      }
       
       try {
         setLoading(true);
@@ -31,7 +34,7 @@ export default function OrderHistory() {
 
   const formatDate = (timestamp) => {
     if (!timestamp?.toDate) return 'Date not available';
-    return new Date(timestamp.toDate()).toLocaleDateString('en-US', {
+    return new Date(timestamp.toDate()).toLocaleDateString('en-ZA', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -39,6 +42,15 @@ export default function OrderHistory() {
       minute: '2-digit'
     });
   };
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Loading your orders...</p>
+      </div>
+    );
+  }
 
   if (!currentUser) {
     return (
@@ -48,15 +60,6 @@ export default function OrderHistory() {
         <Link to="/login" className="btn btn-primary">
           Sign In
         </Link>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-        <p>Loading your orders...</p>
       </div>
     );
   }
@@ -131,7 +134,7 @@ export default function OrderHistory() {
                 
                 <div className="order-total">
                   <span>Total: </span>
-                  <strong>${order.amounts?.total?.toFixed(2) || '0.00'}</strong>
+                  <strong>R{order.amounts?.total?.toFixed(2) || '0.00'}</strong>
                 </div>
                 
                 <div className="toggle-details">
@@ -146,15 +149,14 @@ export default function OrderHistory() {
                   <h4>Shipping Address</h4>
                   {order.shippingAddress ? (
                     <address>
-                      {order.shippingAddress.fullName && <p>{order.shippingAddress.fullName}</p>}
-                      {order.shippingAddress.address1 && <p>{order.shippingAddress.address1}</p>}
-                      {order.shippingAddress.address2 && <p>{order.shippingAddress.address2}</p>}
+                      {order.shippingAddress.name && <p><strong>{order.shippingAddress.name}</strong></p>}
+                      {order.shippingAddress.street && <p>{order.shippingAddress.street}</p>}
+                      {order.shippingAddress.suburb && <p>{order.shippingAddress.suburb}</p>}
                       <p>
                         {order.shippingAddress.city && `${order.shippingAddress.city}, `}
-                        {order.shippingAddress.state && `${order.shippingAddress.state} `}
+                        {order.shippingAddress.province && `${order.shippingAddress.province} `}
                         {order.shippingAddress.postalCode && `${order.shippingAddress.postalCode}`}
                       </p>
-                      {order.shippingAddress.country && <p>{order.shippingAddress.country}</p>}
                       {order.shippingAddress.phone && <p>Phone: {order.shippingAddress.phone}</p>}
                     </address>
                   ) : (
@@ -173,10 +175,10 @@ export default function OrderHistory() {
                         <div className="item-details">
                           <h5>{item.name}</h5>
                           <p>Quantity: {item.quantity}</p>
-                          <p>Price: ${item.price.toFixed(2)} each</p>
+                          <p>Price: R{item.price.toFixed(2)} each</p>
                         </div>
                         <div className="item-total">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          <strong>R{(item.price * item.quantity).toFixed(2)}</strong>
                         </div>
                       </div>
                     ))}
@@ -187,19 +189,19 @@ export default function OrderHistory() {
                   <h4>Order Summary</h4>
                   <div className="summary-row">
                     <span>Subtotal:</span>
-                    <span>${order.amounts?.subtotal?.toFixed(2) || '0.00'}</span>
+                    <span>R{order.amounts?.subtotal?.toFixed(2) || '0.00'}</span>
                   </div>
                   <div className="summary-row">
                     <span>Shipping:</span>
-                    <span>${order.amounts?.shipping?.toFixed(2) || '0.00'}</span>
+                    <span>R{order.amounts?.shipping?.toFixed(2) || '0.00'}</span>
                   </div>
                   <div className="summary-row">
                     <span>Tax:</span>
-                    <span>${order.amounts?.tax?.toFixed(2) || '0.00'}</span>
+                    <span>R{order.amounts?.tax?.toFixed(2) || '0.00'}</span>
                   </div>
                   <div className="summary-row total">
                     <span>Total:</span>
-                    <span>${order.amounts?.total?.toFixed(2) || '0.00'}</span>
+                    <strong>R{order.amounts?.total?.toFixed(2) || '0.00'}</strong>
                   </div>
                 </div>
                 
