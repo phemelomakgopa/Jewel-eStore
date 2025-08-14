@@ -45,6 +45,7 @@
   background: none;
   padding: 2rem 3rem;
   border-radius: 1rem;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   animation: fadeIn 1.2s ease-out forwards;
 }
