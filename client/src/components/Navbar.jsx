@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./Navbar.module.css"; // Import the CSS Module
+import styles from "./Navbar.module.css"; 
 import { useAuth } from "../contexts/AuthContext";
 import { useWishlist } from "../contexts/WishlistContext";
 import { useCart } from "../contexts/CartContext";

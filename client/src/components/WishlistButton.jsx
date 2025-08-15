@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useWishlist } from '../contexts/WishlistContext';
 import './WishlistButton.css';
+import { FaHeart} from "react-icons/fa";
+import styles from './WishlistButton.css';
 
 const WishlistButton = ({ product, size = 'medium', showText = false, className = '' }) => {
   const { isInWishlist, toggleWishlist } = useWishlist();
@@ -47,7 +49,7 @@ const WishlistButton = ({ product, size = 'medium', showText = false, className 
       aria-label={isInList ? 'Remove from wishlist' : 'Add to wishlist'}
     >
       <span className="heart-icon">
-        {isInList ? '❤️' : '🤍'}
+        {isInList ? <FaHeart className={styles.heart} /> : '🤍'}
       </span>
       {showText && (
         <span className="wishlist-text">

@@ -20,8 +20,12 @@
 /* Search Container */
 .searchContainer {
   flex: 1;
-  max-width: 400px;
+  max-width: 380px;
+  background-color: white;
   display: none;
+}
+.searchBar {
+  background-color: white;
 }
 
 @media (min-width: 768px) {

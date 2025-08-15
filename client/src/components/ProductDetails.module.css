@@ -1,6 +1,6 @@
 .productPage {
   padding: 2rem 0;
-  background: #f8f9fa;
+  background: #b6ab99;
   min-height: 100vh;
 }
 
@@ -16,8 +16,9 @@
   gap: 0.5rem;
   margin-bottom: 2rem;
   padding: 1rem;
-  background: white;
+  background: b6ab99;
   border-radius: 8px;
+  border-color: brown;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -44,7 +45,7 @@
 .notFound {
   text-align: center;
   padding: 4rem 2rem;
-  background: white;
+  background: b6ab99;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -64,7 +65,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
   margin-bottom: 3rem;
-  background: white;
+  background: #b6ab99;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -72,7 +73,7 @@
 
 .productImage img {
   width: 100%;
-  height: 400px;
+  height: 80%;
   object-fit: cover;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -102,20 +103,21 @@
 .productPrice {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #e74c3c;
+  color: brown;
   margin: 0;
 }
 
 .productMeta {
-  background: #f8f9fa;
+  background: rgba(178, 131, 131, 0.564);
   padding: 1rem;
   border-radius: 8px;
-  border-left: 4px solid #3498db;
+  border-left: 4px solid brown;
 }
 
 .productMeta p {
   margin: 0.5rem 0;
-  color: #2c3e50;
+  color: black;
+  opacity: 0.8;
 }
 
 .productMeta strong {
@@ -123,7 +125,7 @@
 }
 
 .productDescription {
-  color: #666;
+  color: black;
   line-height: 1.6;
   margin: 1rem 0;
   font-size: 1.1rem;
@@ -135,7 +137,7 @@
   gap: 0.5rem;
   color: #27ae60;
   font-weight: 500;
-  background: #d5f4e6;
+  background: #b6ab99;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   width: fit-content;
@@ -164,15 +166,15 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  border: 2px solid #ddd;
+  border: 2px solid #5c4033;
   border-radius: 8px;
   padding: 0.5rem;
   width: fit-content;
-  background: white;
+  background: #8d6e60;
 }
 
 .quantityControls button {
-  background: #3498db;
+  background: brown;
   color: white;
   border: none;
   width: 35px;
@@ -188,7 +190,8 @@
 }
 
 .quantityControls button:hover:not(:disabled) {
-  background: #2980b9;
+  background: brown;
+  opacity: 0.7;
   transform: scale(1.05);
 }
 
@@ -207,7 +210,7 @@
 }
 
 .addToCartBtn {
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  background: #5c4033;
   color: white;
   border: none;
   padding: 1rem 2rem;
@@ -222,7 +225,7 @@
 }
 
 .addToCartBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #c0392b, #a93226);
+  background: linear-gradient(135deg, rgb(59, 18, 18), rgb(78, 39, 39));
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
@@ -252,8 +255,8 @@
 
 .backBtn {
   background: transparent;
-  color: #3498db;
-  border: 2px solid #3498db;
+  color: #5c4033;
+  border: 2px solid #5c4033;
   padding: 0.8rem 1.5rem;
   border-radius: 6px;
   font-size: 1rem;
@@ -264,7 +267,7 @@
 }
 
 .backBtn:hover {
-  background: #3498db;
+  background: rgb(78, 39, 39);
   color: white;
   transform: translateX(-2px);
 }
@@ -286,7 +289,7 @@
 }
 
 .sectionDivider span {
-  background: #f8f9fa;
+  background: #b6ab99;
   padding: 0 2rem;
   font-size: 1.3rem;
   font-weight: 600;
@@ -302,7 +305,7 @@
 }
 
 .similarCard {
-  background: white;
+  background: #b6ab99;
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -314,7 +317,7 @@
 .similarCard:hover {
   transform: translateY(-6px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  border-color: #3498db;
+  border-color: brown;
 }
 
 .similarCard img {
@@ -326,19 +329,17 @@
 }
 
 .similarName {
+  font-size: 1.2rem;
   margin: 0.5rem 0;
+  color: #333;
   font-weight: 600;
-  color: #2c3e50;
-  text-align: center;
-  font-size: 1rem;
 }
 
 .similarPrice {
-  margin: 0.5rem 0;
-  font-weight: 700;
-  color: #e74c3c;
-  text-align: center;
+  font-weight: bold;
+  color: #555;
   font-size: 1.1rem;
+  margin-bottom: 1rem;
 }
 
 @media (max-width: 768px) {

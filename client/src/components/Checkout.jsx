@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
@@ -50,20 +50,20 @@ export default function Checkout() {
     }));
   };
 
-  const formatCardNumber = (value) => {
+  /*const formatCardNumber = (value) => {
     return value
       .replace(/\D/g, "")
       .replace(/(\d{4})/g, "$1 ")
       .trim()
       .substring(0, 19);
-  };
+  };*/
 
-  const formatExpiryDate = (value) => {
+  /*const formatExpiryDate = (value) => {
     return value
       .replace(/\D/g, "")
       .replace(/(\d{2})(\d{1,2})/, "$1/$2")
       .substring(0, 5);
-  };
+  };*/
 
   const handleSuccessfulPayment = async (paymentIntentId) => {
     if (!currentUser || !address) {
@@ -123,13 +123,13 @@ export default function Checkout() {
     alert("This payment method is not yet implemented.");
   };
 
-  const getCardBrand = (cardNumber) => {
+  /*const getCardBrand = (cardNumber) => {
     const num = cardNumber.replace(/\s+/g, "");
     if (/^4/.test(num)) return "visa";
     if (/^5[1-5]/.test(num)) return "mastercard";
     if (/^3[47]/.test(num)) return "amex";
     return "unknown";
-  };
+  };*/
 
   const sendOrderConfirmationEmail = (orderDetails) => {
     const templateParams = {
@@ -344,7 +344,7 @@ export default function Checkout() {
                 {/* Card Payment Form */}
                 {payment.method === "card" && (
                   <StripePaymentForm
-                    amount={Math.round(total * 100) / 100}
+                    amount={total/100}
                     onSuccessfulPayment={handleSuccessfulPayment}
                   />
                 )}

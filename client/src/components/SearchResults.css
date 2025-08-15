@@ -136,7 +136,7 @@
 }
 
 .product-card {
-  background: white;
+  background: #b6ab99;
   border: 1px solid #e5e7eb;
   border-radius: 16px;
   overflow: hidden;
@@ -248,7 +248,7 @@
 .add-to-cart-btn {
   width: 100%;
   padding: 12px;
-  background: #1f2937;
+  background: #5c4033;
   color: white;
   border: none;
   border-radius: 8px;
@@ -274,7 +274,7 @@
 }
 
 .add-to-cart-btn.adding {
-  background: #10b981;
+  background: #5c4033;
 }
 
 .btn-spinner {
