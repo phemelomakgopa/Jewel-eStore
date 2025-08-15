@@ -9,6 +9,16 @@ const StripePaymentForm = ({ amount: initialAmount, onSuccessfulPayment }) => {
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
 
+  // Check if Stripe is properly configured
+  if (!process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY) {
+    return (
+      <div className="stripe-error">
+        <p>Payment processing is currently unavailable. Please contact support.</p>
+        <p>Error: Stripe configuration missing</p>
+      </div>
+    );
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setProcessing(true);

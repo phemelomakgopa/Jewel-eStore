@@ -30,7 +30,9 @@ import Loader from "./components/Loader.jsx";
 import "./App.css";
 import ProductDetails from "./components/ProductDetails.jsx";
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+const stripePromise = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY 
+  ? loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
+  : null;
 
 function App() {
   const [loading, setLoading] = useState(true);
