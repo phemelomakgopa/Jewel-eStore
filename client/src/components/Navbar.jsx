@@ -1,12 +1,17 @@
 import React from "react";
 import styles from "./Navbar.module.css"; // Import the CSS Module
 import { useAuth } from "../contexts/AuthContext";
+import { useWishlist } from "../contexts/WishlistContext";
+import { useCart } from "../contexts/CartContext";
 import UserProfile from "./UserProfile";
+import SearchBar from "./SearchBar";
 
-import { FaShoppingCart, FaUserCircle } from "react-icons/fa";
+import { FaShoppingCart, FaUserCircle, FaHeart } from "react-icons/fa";
 
 const Navbar = () => {
   const { currentUser } = useAuth();
+  const { getWishlistCount } = useWishlist();
+  const { getTotalItems } = useCart();
 
   return (
     <nav className={styles.navbar}>
@@ -15,6 +20,11 @@ const Navbar = () => {
         <a href="/" className={styles.logo}>
           Jewel Store.
         </a>
+
+        {/* Search Bar */}
+        <div className={styles.searchContainer}>
+          <SearchBar className={styles.searchBar} />
+        </div>
 
         {/* Navigation Links (Desktop) */}
         <div className={styles.navLinksDesktop}>
@@ -40,8 +50,18 @@ const Navbar = () => {
             </a>
           ) : null}
 
+          <a href="/wishlist" className={styles.wishlistButton}>
+            <FaHeart className={styles.wishlistIcon} />
+            {currentUser && getWishlistCount() > 0 && (
+              <span className={styles.wishlistBadge}>{getWishlistCount()}</span>
+            )}
+          </a>
+
           <a href="/cart" className={styles.cartButton}>
             <FaShoppingCart className={styles.cartIcon} />
+            {getTotalItems() > 0 && (
+              <span className={styles.cartBadge}>{getTotalItems()}</span>
+            )}
           </a>
           
           {currentUser && (
@@ -61,26 +81,4 @@ const Navbar = () => {
   );
 };
 
-// src/components/Navbar.jsx
-
 export default Navbar;
-
-/* src/components/Navbar.jsx
-//import React from 'react';
-import { FaShoppingCart } from 'react-icons/fa';
-export default function Navbar() {
-  return (
-    <header className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
-      <h1 className="text-2xl font-bold text-yellow-600">Jewel Store</h1>
-      <nav className="space-x-6 text-sm font-medium">
-        <a href="#" className="hover:text-yellow-600 transition">Home</a>
-        <a href="#" className="hover:text-yellow-600 transition">Sign In</a>
-        <a href="#" className="hover:text-yellow-600 transition">About</a>
-        <a href="#" className="hover:text-yellow-600 transition">Products</a>
-        <a href="#" className="hover:text-yellow-600 transition">Contact</a>
-      </nav>
-    </header>
-  );
-}
-
-//import './Navbar.css'; // Assuming you have a CSS file for Navbar styles*/

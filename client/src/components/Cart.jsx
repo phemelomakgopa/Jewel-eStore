@@ -11,7 +11,6 @@ export default function Cart() {
     items: cartItems,
     removeItem,
     updateQuantity,
-    addItem,
     subtotal,
     shipping,
     tax,

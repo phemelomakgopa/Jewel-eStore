@@ -165,6 +165,11 @@ export const CartProvider = ({ children }) => {
     return totalInCents / 100;
   }, [subtotal, discount, shipping, tax]);
 
+  // Calculate total number of items in the cart
+  const getTotalItems = () => {
+    return items.reduce((total, item) => total + item.quantity, 0);
+  };
+
   const value = {
     items,
     addToCart,
@@ -172,6 +177,7 @@ export const CartProvider = ({ children }) => {
     removeFromCart,
     removeItem: removeFromCart, // Alias for removeFromCart
     clearCart,
+    getTotalItems,
     subtotal,
     shipping,
     tax,

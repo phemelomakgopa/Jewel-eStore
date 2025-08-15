@@ -1,0 +1,177 @@
+.star-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #d1d5db;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.star:disabled {
+  cursor: default;
+}
+
+.star.interactive:hover {
+  transform: scale(1.1);
+}
+
+.star.filled {
+  color: #fbbf24;
+}
+
+.star.partial {
+  color: #fbbf24;
+}
+
+.star svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.partial-star {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.rating-value {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.9em;
+}
+
+/* Size variants */
+.star-rating.small .star {
+  width: 16px;
+  height: 16px;
+}
+
+.star-rating.small .rating-value {
+  font-size: 12px;
+}
+
+.star-rating.medium .star {
+  width: 20px;
+  height: 20px;
+}
+
+.star-rating.medium .rating-value {
+  font-size: 14px;
+}
+
+.star-rating.large .star {
+  width: 24px;
+  height: 24px;
+}
+
+.star-rating.large .rating-value {
+  font-size: 16px;
+}
+
+.star-rating.extra-large .star {
+  width: 32px;
+  height: 32px;
+}
+
+.star-rating.extra-large .rating-value {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Interactive states */
+.star.interactive:focus {
+  outline: 2px solid #d4af37;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.star.interactive:hover:not(:disabled) {
+  color: #f59e0b;
+}
+
+/* Animation for rating changes */
+.star.filled {
+  animation: starFill 0.3s ease-out;
+}
+
+@keyframes starFill {
+  0% {
+    transform: scale(1);
+    color: #d1d5db;
+  }
+  50% {
+    transform: scale(1.2);
+    color: #f59e0b;
+  }
+  100% {
+    transform: scale(1);
+    color: #fbbf24;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .star {
+    color: #4b5563;
+  }
+  
+  .star.filled,
+  .star.partial {
+    color: #fbbf24;
+  }
+  
+  .rating-value {
+    color: #f9fafb;
+  }
+  
+  .star.interactive:hover:not(:disabled) {
+    color: #f59e0b;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .star,
+  .star.filled {
+    animation: none;
+    transition: none;
+  }
+  
+  .star.interactive:hover {
+    transform: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .star {
+    color: #666666;
+  }
+  
+  .star.filled,
+  .star.partial {
+    color: #000000;
+  }
+  
+  .star.interactive:focus {
+    outline: 3px solid #000000;
+  }
+}

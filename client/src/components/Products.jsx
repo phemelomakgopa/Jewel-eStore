@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
+import WishlistButton from "./WishlistButton";
 import styles from "./Products.module.css";
 
 // images
@@ -106,6 +107,11 @@ const Products = ({ categoryFilter = null }) => {
                 alt={product.name} 
                 className={styles.productImage} 
                 loading="lazy"
+              />
+              <WishlistButton 
+                product={product} 
+                size="medium" 
+                className="absolute-top-right"
               />
             </div>
             <h3 className={styles.productName}>{product.name}</h3>

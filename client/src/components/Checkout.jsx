@@ -10,8 +10,7 @@ import emailjs from "@emailjs/browser";
 export default function Checkout() {
   const navigate = useNavigate();
   const { items, subtotal, shipping, tax, total, clearCart } = useCart();
-  const { currentUser, userProfile, updateShippingAddress, createOrder } =
-    useAuth();
+  const { currentUser, userProfile, updateShippingAddress, createOrder } = useAuth();
 
   const [payment, setPayment] = useState({
     method: "card", // card, eft, instant_eft

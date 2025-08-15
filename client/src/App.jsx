@@ -5,6 +5,10 @@ import PageTitle from "./components/PageTitle.js";
 import Navbar from "./components/Navbar.jsx";
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import { CartProvider } from './contexts/CartContext.jsx';
+import { WishlistProvider } from './contexts/WishlistContext.jsx';
+import { SearchProvider } from './contexts/SearchContext.jsx';
+import { ReviewsProvider } from './contexts/ReviewsContext.jsx';
+import { AdminProvider } from './contexts/AdminContext.jsx';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import Hero from "./components/Hero.jsx";
@@ -19,6 +23,9 @@ import Cart from "./components/Cart.jsx";
 import Checkout from "./components/Checkout.jsx";
 import OrderHistory from "./components/OrderHistory.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
+import Wishlist from "./components/Wishlist.jsx";
+import SearchResults from "./components/SearchResults.jsx";
+import AdminDashboard from "./components/AdminDashboard.jsx";
 import Loader from "./components/Loader.jsx";
 import "./App.css";
 import ProductDetails from "./components/ProductDetails.jsx";
@@ -38,8 +45,12 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <Elements stripe={stripePromise}>
-          <Router>
+        <WishlistProvider>
+          <SearchProvider>
+            <ReviewsProvider>
+              <AdminProvider>
+                <Elements stripe={stripePromise}>
+                  <Router>
             <PageTitle />
             <div className="app-container">
               <Navbar />
@@ -65,9 +76,13 @@ function App() {
                   <Route path="/signup" element={<SignUp />} />
                   <Route path="/forgotpassword" element={<ForgotPassword />} />
                   <Route path="/cart" element={<Cart />} />
+                  <Route path="/wishlist" element={<Wishlist />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/orders" element={<OrderHistory />} />
+                  <Route path="/search" element={<SearchResults />} />
                   <Route path="/adminpanel" element={<AdminPanel />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
                  <Route path="/product/:id" element={<ProductDetails />} />
 
                   {/* Fallback -> main sections */}
@@ -86,8 +101,12 @@ function App() {
               </main>
               <Footer />
             </div>
-          </Router>
-        </Elements>
+                  </Router>
+                </Elements>
+              </AdminProvider>
+            </ReviewsProvider>
+          </SearchProvider>
+        </WishlistProvider>
       </CartProvider>
     </AuthProvider>
   );

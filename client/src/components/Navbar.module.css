@@ -14,6 +14,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+}
+
+/* Search Container */
+.searchContainer {
+  flex: 1;
+  max-width: 400px;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .searchContainer {
+    display: block;
+  }
 }
 
 /* Logo */
@@ -82,6 +96,81 @@
 .cartButton {
   background: none;
   padding: 0;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cartIcon {
+  font-size: 1.2rem;
+  color: black;
+  transition: all 0.3s ease;
+}
+
+.cartIcon:hover {
+  color: #5A4C43;
+  transform: scale(1.1);
+}
+
+.cartBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #d4af37;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 2s infinite;
+}
+
+.wishlistButton {
+  background: none;
+  padding: 0;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wishlistIcon {
+  font-size: 1.2rem;
+  color: #e74c3c;
+  transition: all 0.3s ease;
+}
+
+.wishlistIcon:hover {
+  color: #c0392b;
+  transform: scale(1.1);
+}
+
+.wishlistBadge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
 .hamburgerIcon:hover {
@@ -92,7 +181,6 @@
   width: 1.5rem;
   height: 1.5rem;
 }
-
 
 .cartIcon {
   font-size: 1.2rem;
