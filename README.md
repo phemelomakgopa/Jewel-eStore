@@ -1,6 +1,6 @@
-# 💎 JewelJive: E-Commerce Website
+# 💎 Jewel eStore: E-Commerce Website
 
-JewelJive is a **modern jewelry e-commerce web application** built with **React (Vite)** and styled with **Tailwind CSS** for speed, scalability, and elegance.  
+Jewel eStore is a **modern jewelry e-commerce web application** built with **React (Vite)** and styled with **Tailwind CSS** for speed, scalability, and elegance.  
 It’s designed to help small to medium jewelry brands showcase their products beautifully while enabling customers to browse, add to cart, and make secure purchases online.
 
 ---
@@ -21,7 +21,7 @@ It’s designed to help small to medium jewelry brands showcase their products b
 
 ## 🪩 About
 
-JewelJive was created as a portfolio-level e-commerce solution demonstrating a real-world jewelry store interface.  
+Jewel eStore was created as a portfolio-level e-commerce solution demonstrating a real-world jewelry store interface.  
 The focus is on:
 - Simplicity and performance  
 - Responsive and luxurious design  
@@ -69,7 +69,7 @@ Make sure you have installed:
 ```bash
 Steps
 1. Clone this repository
-git clone https://github.com/phemelomakgopa/JewelJive.git
+git clone https://github.com/phemelomakgopa/Jewel-eStore.git
 
 2. Navigate to the project folder
 cd JewelJive
@@ -86,7 +86,7 @@ By default, the app runs at:
 ## 🧱 Project Structure
 
 ```bash
-JewelJive/
+Jewel-eStore/
 │
 ├── public/                # Static assets (favicon, logos, images)
 ├── src/
