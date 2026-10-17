@@ -1,99 +1,109 @@
 import React, { useState } from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../config/firebaseConfig";
+import { useAuth } from "../contexts/AuthContext";
+import { authErrorMessage } from "../utils/authErrors";
 import "./SignIn.css";
-import {
-  getAuth,
-  signInWithPopup,
-  GoogleAuthProvider,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { useNavigate, Link } from "react-router-dom";
-import { app } from "../config/firebaseConfig";
-import { adminEmail } from "../config/adminList";
+
+export const GoogleButton = ({ onClick, disabled, children }) => (
+  <button type="button" className="google-btn" onClick={onClick} disabled={disabled}>
+    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />
+      <path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" />
+      <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z" />
+      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z" />
+    </svg>
+    {children}
+  </button>
+);
 
 export default function SignIn() {
   const navigate = useNavigate();
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
+  const location = useLocation();
+  const { currentUser } = useAuth();
+  const from = location.state?.from || "/";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  // Google Sign-In (optional, remove if not needed)
-  const handleGoogleSignIn = async () => {
+  if (currentUser) return <Navigate to={from} replace />;
+
+  const run = async (fn) => {
+    setBusy(true);
+    setError("");
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      navigate("/");
-    } catch (error) {
-      alert("Google Sign-In failed. Please try again.");
+      await fn();
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError(authErrorMessage(err));
+      setBusy(false);
     }
   };
 
-  // Email Sign-In
-  const handleSignIn = async (e) => {
+  const handleSignIn = (e) => {
     e.preventDefault();
-    try {
-      const { user } = await signInWithEmailAndPassword(auth, email, password);
-      // You can store/display user initial after this
-      navigate("/");
-    } catch (error) {
-      alert("Invalid email or password. Please try again.");
-    }
+    run(() => signInWithEmailAndPassword(auth, email.trim(), password));
   };
 
   return (
-    <div className="signup-page">
-      <div className="signup-container">
-        <form className="signup-form" onSubmit={handleSignIn}>
-          <input
-            type="email"
-            required
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+    <div className="auth-page">
+      <form className="auth-card" onSubmit={handleSignIn}>
+        <h1>Sign in</h1>
+        <p className="auth-lead">
+          {from === "/checkout" ? "Sign in to finish checking out. Your cart is saved." : "Welcome back."}
+        </p>
 
-          <input
-            type="password"
-            required
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+        {error && (
+          <p className="auth-error" role="alert">
+            {error}
+          </p>
+        )}
 
-          <div
-            className="forgot-password"
-            style={{
-              textAlign: "right",
-              marginBottom: "10px",
-            }}
-          >
-            <Link to="/forgotpassword">Forgot Password?</Link>
-          </div>
+        <label htmlFor="signin-email">Email</label>
+        <input
+          id="signin-email"
+          type="email"
+          autoComplete="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-          <button type="submit" className="create-account-btn">
-            Sign In
-          </button>
+        <div className="label-row">
+          <label htmlFor="signin-password">Password</label>
+          <Link to="/forgotpassword" state={{ email }}>
+            Forgot password?
+          </Link>
+        </div>
+        <input
+          id="signin-password"
+          type="password"
+          autoComplete="current-password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-          <div className="divider">or</div>
+        <button type="submit" className="auth-submit" disabled={busy}>
+          {busy ? "Signing in…" : "Sign in"}
+        </button>
 
-          <button
-            type="button"
-            className="google-btn"
-            onClick={handleGoogleSignIn}
-          >
-            <img
-              src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
-              alt="Google logo"
-              style={{ width: 20, marginRight: 8 }}
-            />
-            Continue with Google
-          </button>
-          <div className="signup-bottom">
-            Don't have an account? <Link to="/signup">Sign Up</Link>
-          </div>
-        </form>
-      </div>
+        <div className="divider">or</div>
+
+        <GoogleButton onClick={() => run(() => signInWithPopup(auth, googleProvider))} disabled={busy}>
+          Continue with Google
+        </GoogleButton>
+
+        <p className="auth-switch">
+          New here?{" "}
+          <Link to="/signup" state={{ from }}>
+            Create an account
+          </Link>
+        </p>
+      </form>
     </div>
   );
 }

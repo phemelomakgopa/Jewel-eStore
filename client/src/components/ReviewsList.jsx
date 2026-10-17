@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useToast } from '../contexts/ToastContext';
 import { useReviews } from '../contexts/ReviewsContext';
 import { useAuth } from '../contexts/AuthContext';
 import StarRating from './StarRating';
@@ -15,7 +17,9 @@ const ReviewsList = ({ productId }) => {
     canUserReview,
     getUserReviewForProduct
   } = useReviews();
-  const { user } = useAuth();
+  const { currentUser: user } = useAuth();
+  const { notify } = useToast();
+  const location = useLocation();
   
   const [sortBy, setSortBy] = useState('newest');
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -52,7 +56,7 @@ const ReviewsList = ({ productId }) => {
       try {
         await deleteReview(reviewId);
       } catch (error) {
-        alert('Failed to delete review. Please try again.');
+        notify("Couldn't delete your review. Try again.", { tone: 'error' });
       } finally {
         setDeletingReview(null);
       }
@@ -140,6 +144,12 @@ const ReviewsList = ({ productId }) => {
             </svg>
             Write a Review
           </button>
+        )}
+
+        {!user && (
+          <Link to="/signin" state={{ from: location.pathname }} className="write-review-btn">
+            Sign in to write a review
+          </Link>
         )}
 
         {/* User's existing review notice */}

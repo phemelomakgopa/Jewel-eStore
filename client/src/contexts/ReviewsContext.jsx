@@ -9,90 +9,94 @@ export const useReviews = () => {
   return ctx;
 };
 
+// Mock reviews data (in a real app, this would come from a backend)
+const mockReviews = [
+  {
+    id: 1,
+    productId: 1,
+    userId: 'user1',
+    userName: 'Sarah Johnson',
+    userAvatar: null,
+    rating: 5,
+    title: 'Beautiful and well-crafted',
+    comment: 'This bronze ring exceeded my expectations. The craftsmanship is excellent and it fits perfectly. I get compliments every time I wear it!',
+    date: new Date('2024-07-15'),
+    helpful: 12,
+    verified: true,
+    images: []
+  },
+  {
+    id: 2,
+    productId: 1,
+    userId: 'user2',
+    userName: 'Michael Chen',
+    userAvatar: null,
+    rating: 4,
+    title: 'Great quality, fast shipping',
+    comment: 'Really happy with this purchase. The ring looks exactly like the photos and arrived quickly. Only minor complaint is that it\'s slightly heavier than expected, but that actually makes it feel more premium.',
+    date: new Date('2024-07-20'),
+    helpful: 8,
+    verified: true,
+    images: []
+  },
+  {
+    id: 3,
+    productId: 2,
+    userId: 'user3',
+    userName: 'Emma Davis',
+    userAvatar: null,
+    rating: 5,
+    title: 'Absolutely stunning bracelet!',
+    comment: 'The pearls are gorgeous and the chain is delicate yet sturdy. Perfect for both casual and formal occasions. Will definitely be ordering more jewelry from this store.',
+    date: new Date('2024-08-01'),
+    helpful: 15,
+    verified: true,
+    images: []
+  },
+  {
+    id: 4,
+    productId: 6,
+    userId: 'user4',
+    userName: 'James Wilson',
+    userAvatar: null,
+    rating: 5,
+    title: 'Perfect engagement ring',
+    comment: 'Proposed with this ring and she said yes! The diamond is brilliant and the setting is beautiful. Excellent customer service throughout the process.',
+    date: new Date('2024-08-10'),
+    helpful: 25,
+    verified: true,
+    images: []
+  },
+  {
+    id: 5,
+    productId: 5,
+    userId: 'user5',
+    userName: 'Lisa Thompson',
+    userAvatar: null,
+    rating: 4,
+    title: 'Love these earrings',
+    comment: 'The heart shape is so cute and they\'re very comfortable to wear. The diamonds sparkle beautifully in the light. Only wish they came with better packaging.',
+    date: new Date('2024-08-12'),
+    helpful: 6,
+    verified: true,
+    images: []
+  }
+];
+
 export const ReviewsProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { currentUser: user } = useAuth();
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Mock reviews data (in a real app, this would come from a backend)
-  const mockReviews = [
-    {
-      id: 1,
-      productId: 1,
-      userId: 'user1',
-      userName: 'Sarah Johnson',
-      userAvatar: null,
-      rating: 5,
-      title: 'Beautiful and well-crafted',
-      comment: 'This bronze ring exceeded my expectations. The craftsmanship is excellent and it fits perfectly. I get compliments every time I wear it!',
-      date: new Date('2024-07-15'),
-      helpful: 12,
-      verified: true,
-      images: []
-    },
-    {
-      id: 2,
-      productId: 1,
-      userId: 'user2',
-      userName: 'Michael Chen',
-      userAvatar: null,
-      rating: 4,
-      title: 'Great quality, fast shipping',
-      comment: 'Really happy with this purchase. The ring looks exactly like the photos and arrived quickly. Only minor complaint is that it\'s slightly heavier than expected, but that actually makes it feel more premium.',
-      date: new Date('2024-07-20'),
-      helpful: 8,
-      verified: true,
-      images: []
-    },
-    {
-      id: 3,
-      productId: 2,
-      userId: 'user3',
-      userName: 'Emma Davis',
-      userAvatar: null,
-      rating: 5,
-      title: 'Absolutely stunning bracelet!',
-      comment: 'The pearls are gorgeous and the chain is delicate yet sturdy. Perfect for both casual and formal occasions. Will definitely be ordering more jewelry from this store.',
-      date: new Date('2024-08-01'),
-      helpful: 15,
-      verified: true,
-      images: []
-    },
-    {
-      id: 4,
-      productId: 6,
-      userId: 'user4',
-      userName: 'James Wilson',
-      userAvatar: null,
-      rating: 5,
-      title: 'Perfect engagement ring',
-      comment: 'Proposed with this ring and she said yes! The diamond is brilliant and the setting is beautiful. Excellent customer service throughout the process.',
-      date: new Date('2024-08-10'),
-      helpful: 25,
-      verified: true,
-      images: []
-    },
-    {
-      id: 5,
-      productId: 5,
-      userId: 'user5',
-      userName: 'Lisa Thompson',
-      userAvatar: null,
-      rating: 4,
-      title: 'Love these earrings',
-      comment: 'The heart shape is so cute and they\'re very comfortable to wear. The diamonds sparkle beautifully in the light. Only wish they came with better packaging.',
-      date: new Date('2024-08-12'),
-      helpful: 6,
-      verified: true,
-      images: []
-    }
-  ];
 
   // Load reviews from localStorage on mount
   useEffect(() => {
-    const savedReviews = localStorage.getItem('jewelStore_reviews');
-    if (savedReviews) {
-      const parsedReviews = JSON.parse(savedReviews).map(review => ({
+    let savedReviews = null;
+    try {
+      savedReviews = JSON.parse(localStorage.getItem('jewelStore_reviews') || 'null');
+    } catch {}
+    if (Array.isArray(savedReviews)) {
+      const parsedReviews = savedReviews.map(review => ({
         ...review,
         date: new Date(review.date)
       }));
@@ -104,7 +108,7 @@ export const ReviewsProvider = ({ children }) => {
 
   // Save reviews to localStorage whenever reviews change
   useEffect(() => {
-    if (reviews.length > mockReviews.length) {
+    if (reviews.length) {
       const userReviews = reviews.filter(review => 
         !mockReviews.some(mock => mock.id === review.id)
       );
@@ -134,7 +138,7 @@ export const ReviewsProvider = ({ children }) => {
         comment: reviewData.comment,
         date: new Date(),
         helpful: 0,
-        verified: true, // In a real app, this would be based on purchase history
+        verified: false, // Would be set server-side from purchase history
         images: reviewData.images || []
       };
 

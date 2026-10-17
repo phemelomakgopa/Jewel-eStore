@@ -1,22 +1,21 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
+// Firebase web config is public by design; access is controlled by
+// Firestore security rules, not by hiding these values.
 const firebaseConfig = {
-    apiKey: "AIzaSyAnkiMO0f9I4SuQzBXZhxLeG7xISzLy5tI",
-    authDomain: "ecommerce-jewlery.firebaseapp.com",
-    projectId: "ecommerce-jewlery",
-    storageBucket: "ecommerce-jewlery.firebasestorage.app",
-    messagingSenderId: "617892589505",
-    appId: "1:617892589505:web:b5784f2cc07eb235e4c940",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "AIzaSyAnkiMO0f9I4SuQzBXZhxLeG7xISzLy5tI",
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "ecommerce-jewlery.firebaseapp.com",
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || "ecommerce-jewlery",
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET || "ecommerce-jewlery.firebasestorage.app",
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || "617892589505",
+  appId: process.env.REACT_APP_FIREBASE_APP_ID || "1:617892589505:web:b5784f2cc07eb235e4c940",
 };
 
-// ✅ Initialize Firebase app
 const app = initializeApp(firebaseConfig);
 
-// ✅ Exports
 export const auth = getAuth(app);
-export const provider = new GoogleAuthProvider();
+export const googleProvider = new GoogleAuthProvider();
 export const db = getFirestore(app);
-export const firebaseApp = app; // alternative export name if needed
-export { app, signInWithPopup, doc, getDoc };
+export { app };

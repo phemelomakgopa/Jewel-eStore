@@ -1,29 +1,21 @@
 import React from "react";
-import { FaShoppingCart } from "react-icons/fa";
-import styles from './Hero.module.css';
+import { Link } from "react-router-dom";
+import styles from "./Hero.module.css";
 
+const Hero = () => (
+  <section className={styles.heroSection}>
+    <div className={styles.imageLeft} aria-hidden="true"></div>
+    <div className={styles.imageMiddle} aria-hidden="true"></div>
+    <div className={styles.imageRight} aria-hidden="true"></div>
 
-const Hero = ({ shrink }) => {
-  return (
-    <section className={`${styles.heroSection} ${shrink ? styles.heroShrink : ""}`}>
-      <div className={styles.imageLeft}></div>
-      <div className={styles.imageMiddle}></div>
-      <div className={styles.imageRight}></div>
-
-      <div className={styles.contentContainer}>
-        <h1 className={styles.heroHeading}>
-          Elevate Your Shopping Experience Today!
-        </h1>
-
-        <button className={styles.shopNowButton}>
-          <div className={styles.shopNowContent}>
-            <FaShoppingCart />
-            Shop Now
-          </div>
-        </button>
-      </div>
-    </section>
-  );
-};
+    <div className={styles.contentContainer}>
+      <h1 className={styles.heroHeading}>Gold, pearls and diamonds, chosen to be worn every day</h1>
+      <p className={styles.heroSub}>Rings, necklaces, bracelets, earrings and anklets, delivered across South Africa.</p>
+      <Link to="/products" className={styles.shopNowButton}>
+        Shop the collection
+      </Link>
+    </div>
+  </section>
+);
 
 export default Hero;

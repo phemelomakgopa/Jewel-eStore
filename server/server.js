@@ -9,7 +9,12 @@ app.use(cors());
 app.use(express.json());
 
 app.post('/create-payment-intent', async (req, res) => {
-  const { amount } = req.body;
+  const amount = Number(req.body?.amount);
+
+  // Stripe's minimum charge for ZAR is R5.00 (500 cents).
+  if (!Number.isInteger(amount) || amount < 500) {
+    return res.status(400).send({ error: 'Amount must be a whole number of cents, at least 500.' });
+  }
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({

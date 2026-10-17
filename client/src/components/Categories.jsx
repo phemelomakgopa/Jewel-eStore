@@ -1,54 +1,42 @@
-import React from 'react';
-import styles from './Categories.module.css';
+import React from "react";
+import { Link } from "react-router-dom";
+import styles from "./Categories.module.css";
 
-import newJewelImg from '../assets/Bronze_Ring.jpg';
-import ringsImg from '../assets/Gold_and_Diamonds_Ring.jpg';
-import necklacesImg from '../assets/Gold_Necklaces.jpg';
-import braceletsImg from '../assets/Pearly_Bracelet.jpg';
-import earringsImg from '../assets/GoldFloral_Earrings.jpg';
-import ankletsImg from '../assets/IMG-20250813-WA0017.jpg';
+import newJewelImg from "../assets/IMG-20250813-WA0024.jpg";
+import ringsImg from "../assets/Gold_and_Diamonds_Ring.jpg";
+import necklacesImg from "../assets/Gold_Necklaces.jpg";
+import braceletsImg from "../assets/Pearly_Bracelet.jpg";
+import earringsImg from "../assets/GoldFloral_Earrings.jpg";
+import ankletsImg from "../assets/IMG-20250813-WA0017.jpg";
 
 const categories = [
-  { name: 'NEW JEWELS', image: newJewelImg },
-  { name: 'RINGS', image: ringsImg },
-  { name: 'NECKLACES', image: necklacesImg },
-  { name: 'BRACELETS', image: braceletsImg },
-  { name: 'EARRINGS', image: earringsImg },
-  { name: 'ANKLETS', image: ankletsImg },
+  { name: "New in", image: newJewelImg, to: "/products?sort=newest" },
+  { name: "Rings", image: ringsImg, to: "/products?category=rings" },
+  { name: "Necklaces", image: necklacesImg, to: "/products?category=necklaces" },
+  { name: "Bracelets", image: braceletsImg, to: "/products?category=bracelets" },
+  { name: "Earrings", image: earringsImg, to: "/products?category=earrings" },
+  { name: "Anklets", image: ankletsImg, to: "/products?category=anklets" },
 ];
 
-const Categories = () => {
-  return (
-    <section className={styles.categoriesSection}>
-      {/* Divider Line with Text */}
-      <div className={styles.sectionDivider} data-aos="fade-up">
-        <span className={styles.categoriesHeading}>CATEGORIES</span>
-      </div>
+const Categories = () => (
+  <section className={styles.categoriesSection} aria-labelledby="categories-heading">
+    <div className={styles.sectionDivider}>
+      <h2 id="categories-heading" className={styles.categoriesHeading}>
+        Shop by category
+      </h2>
+    </div>
 
-      {/* Categories List */}
-      <div className={styles.categoryList}>
-        {categories.map((category, index) => (
-          <div
-            key={index}
-            className={styles.categoryItem}
-            data-aos="fade-up"
-            data-aos-delay={index * 80}
-          >
-            <div className={styles.categoryCard}>
-              <img
-                src={category.image}
-                alt={category.name}
-                className={styles.categoryImage}
-              />
-              <div className={styles.categoryOverlay}>
-                <span className={styles.categoryText}>{category.name}</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-};
+    <ul className={styles.categoryList}>
+      {categories.map((category) => (
+        <li key={category.name}>
+          <Link to={category.to} className={styles.categoryCard}>
+            <img src={category.image} alt="" className={styles.categoryImage} loading="lazy" />
+            <span className={styles.categoryText}>{category.name}</span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  </section>
+);
 
 export default Categories;

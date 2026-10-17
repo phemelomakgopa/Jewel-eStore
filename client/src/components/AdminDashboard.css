@@ -12,7 +12,7 @@
   align-items: center;
   margin-bottom: 32px;
   padding: 24px;
-  background: white;
+  background: var(--paper);
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -21,12 +21,12 @@
   margin: 0 0 8px 0;
   font-size: 28px;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--ink);
 }
 
 .admin-welcome p {
   margin: 0;
-  color: #6b7280;
+  color: var(--ink-soft);
   font-size: 16px;
 }
 
@@ -55,24 +55,24 @@
 }
 
 .admin-btn.primary:hover {
-  background: #b8941f;
+  background: var(--gold);
   transform: translateY(-1px);
 }
 
 .admin-btn.secondary {
-  background: white;
-  color: #374151;
-  border: 2px solid #e5e7eb;
+  background: var(--paper);
+  color: var(--ink);
+  border: 2px solid var(--line);
 }
 
 .admin-btn.secondary:hover {
-  background: #f9fafb;
-  border-color: #d1d5db;
+  background: var(--linen);
+  border-color: var(--line);
 }
 
 .admin-tabs {
   display: flex;
-  background: white;
+  background: var(--paper);
   border-radius: 12px;
   padding: 4px;
   margin-bottom: 24px;
@@ -88,7 +88,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #6b7280;
+  color: var(--ink-soft);
 }
 
 .tab-btn.active {
@@ -97,12 +97,12 @@
 }
 
 .tab-btn:hover:not(.active) {
-  background: #f3f4f6;
-  color: #374151;
+  background: var(--linen);
+  color: var(--ink);
 }
 
 .admin-content {
-  background: white;
+  background: var(--paper);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -117,7 +117,7 @@
 }
 
 .stat-card {
-  background: white;
+  background: var(--paper);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -130,19 +130,19 @@
 }
 
 .stat-card.green {
-  border-left-color: #10b981;
+  border-left-color: var(--success);
 }
 
 .stat-card.blue {
-  border-left-color: #3b82f6;
+  border-left-color: var(--espresso);
 }
 
 .stat-card.purple {
-  border-left-color: #8b5cf6;
+  border-left-color: var(--espresso);
 }
 
 .stat-card.orange {
-  border-left-color: #f59e0b;
+  border-left-color: var(--gold);
 }
 
 .stat-header {
@@ -163,22 +163,22 @@
 
 .stat-card.green .stat-icon {
   background: #d1fae5;
-  color: #059669;
+  color: var(--success);
 }
 
 .stat-card.blue .stat-icon {
-  background: #dbeafe;
-  color: #2563eb;
+  background: var(--linen);
+  color: var(--espresso);
 }
 
 .stat-card.purple .stat-icon {
   background: #e9d5ff;
-  color: #7c3aed;
+  color: var(--espresso);
 }
 
 .stat-card.orange .stat-icon {
   background: #fed7aa;
-  color: #d97706;
+  color: var(--gold);
 }
 
 .stat-icon svg {
@@ -198,11 +198,11 @@
 }
 
 .growth-icon.positive {
-  color: #10b981;
+  color: var(--success);
 }
 
 .growth-icon.negative {
-  color: #ef4444;
+  color: var(--danger);
 }
 
 .growth-text {
@@ -211,27 +211,27 @@
 }
 
 .growth-text.positive {
-  color: #10b981;
+  color: var(--success);
 }
 
 .growth-text.negative {
-  color: #ef4444;
+  color: var(--danger);
 }
 
 .growth-text.neutral {
-  color: #6b7280;
+  color: var(--ink-soft);
 }
 
 .stat-value {
   font-size: 24px;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--ink);
   margin-bottom: 4px;
 }
 
 .stat-title {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--ink-soft);
   font-weight: 500;
 }
 
@@ -244,7 +244,7 @@
   margin: 0 0 16px 0;
   font-size: 18px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--ink);
 }
 
 .status-grid {
@@ -254,7 +254,7 @@
 }
 
 .status-card {
-  background: #f9fafb;
+  background: var(--linen);
   border-radius: 8px;
   padding: 16px;
   text-align: center;
@@ -267,41 +267,41 @@
 }
 
 .status-card.pending {
-  border-color: #f59e0b;
+  border-color: var(--gold);
   background: #fffbeb;
 }
 
 .status-card.processing {
-  border-color: #3b82f6;
-  background: #eff6ff;
+  border-color: var(--espresso);
+  background: var(--linen);
 }
 
 .status-card.shipped {
-  border-color: #8b5cf6;
-  background: #f5f3ff;
+  border-color: var(--espresso);
+  background: var(--linen);
 }
 
 .status-card.delivered,
 .status-card.completed {
-  border-color: #10b981;
+  border-color: var(--success);
   background: #ecfdf5;
 }
 
 .status-card.cancelled {
-  border-color: #ef4444;
+  border-color: var(--danger);
   background: #fef2f2;
 }
 
 .status-count {
   font-size: 24px;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--ink);
   margin-bottom: 4px;
 }
 
 .status-label {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--ink-soft);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -312,11 +312,11 @@
   margin: 0 0 16px 0;
   font-size: 18px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--ink);
 }
 
 .products-table {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--line);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -326,11 +326,11 @@
   grid-template-columns: 2fr 1fr 1fr;
   gap: 16px;
   padding: 16px;
-  background: #f9fafb;
+  background: var(--linen);
   font-weight: 600;
-  color: #374151;
+  color: var(--ink);
   font-size: 14px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--line);
 }
 
 .table-row {
@@ -338,12 +338,12 @@
   grid-template-columns: 2fr 1fr 1fr;
   gap: 16px;
   padding: 16px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--line);
   transition: background-color 0.2s ease;
 }
 
 .table-row:hover {
-  background: #f9fafb;
+  background: var(--linen);
 }
 
 .table-row:last-child {
@@ -372,13 +372,13 @@
 
 .product-name {
   font-weight: 500;
-  color: #1f2937;
+  color: var(--ink);
 }
 
 .product-sales,
 .product-revenue {
   font-weight: 500;
-  color: #374151;
+  color: var(--ink);
 }
 
 /* Analytics Charts */
@@ -389,17 +389,17 @@
 }
 
 .chart-container {
-  background: #f9fafb;
+  background: var(--linen);
   border-radius: 12px;
   padding: 24px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--line);
 }
 
 .chart-container h3 {
   margin: 0 0 20px 0;
   font-size: 16px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--ink);
   text-align: center;
 }
 
@@ -428,7 +428,7 @@
 }
 
 .bar.orders {
-  background: #3b82f6;
+  background: var(--espresso);
 }
 
 .bar:hover {
@@ -439,12 +439,12 @@
 .bar-label {
   font-size: 12px;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--ink-soft);
 }
 
 .bar-value {
   font-size: 10px;
-  color: #9ca3af;
+  color: var(--ink-soft);
   font-weight: 500;
 }
 
@@ -460,7 +460,7 @@
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--ink);
 }
 
 .orders-table .table-header {
@@ -474,7 +474,7 @@
 .order-id {
   font-family: monospace;
   font-weight: 600;
-  color: #374151;
+  color: var(--ink);
 }
 
 .customer-info {
@@ -485,17 +485,17 @@
 
 .customer-name {
   font-weight: 500;
-  color: #1f2937;
+  color: var(--ink);
 }
 
 .customer-email {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--ink-soft);
 }
 
 .order-total {
   font-weight: 600;
-  color: #1f2937;
+  color: var(--ink);
 }
 
 .order-status {
@@ -514,7 +514,7 @@
 }
 
 .order-status.processing {
-  background: #dbeafe;
+  background: var(--linen);
   color: #1e40af;
 }
 
@@ -536,7 +536,7 @@
 
 .order-date {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--ink-soft);
 }
 
 /* Unauthorized Access */
@@ -551,7 +551,7 @@
 .unauthorized-content {
   text-align: center;
   padding: 40px;
-  background: white;
+  background: var(--paper);
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   max-width: 400px;
@@ -560,7 +560,7 @@
 .unauthorized-content svg {
   width: 64px;
   height: 64px;
-  color: #ef4444;
+  color: var(--danger);
   margin-bottom: 20px;
 }
 
@@ -568,12 +568,12 @@
   margin: 0 0 12px 0;
   font-size: 24px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--ink);
 }
 
 .unauthorized-content p {
   margin: 0 0 24px 0;
-  color: #6b7280;
+  color: var(--ink-soft);
   line-height: 1.5;
 }
 
@@ -589,7 +589,7 @@
 }
 
 .back-home-btn:hover {
-  background: #b8941f;
+  background: var(--gold);
   transform: translateY(-1px);
 }
 
@@ -661,7 +661,7 @@
     grid-column: 1 / -1;
     text-align: center;
     padding-top: 8px;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--line);
     margin-top: 8px;
   }
 }
@@ -706,53 +706,53 @@
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .admin-dashboard {
-    background: #111827;
+    background: var(--ink);
   }
   
   .admin-header,
   .admin-content,
   .admin-tabs {
-    background: #1f2937;
-    border-color: #374151;
+    background: var(--ink);
+    border-color: var(--ink);
   }
   
   .admin-welcome h1 {
-    color: #f9fafb;
+    color: var(--linen);
   }
   
   .stat-card,
   .chart-container {
-    background: #1f2937;
-    border-color: #374151;
+    background: var(--ink);
+    border-color: var(--ink);
   }
   
   .stat-value,
   .product-name,
   .customer-name,
   .order-total {
-    color: #f9fafb;
+    color: var(--linen);
   }
   
   .products-table,
   .orders-table {
-    border-color: #374151;
+    border-color: var(--ink);
   }
   
   .table-header {
-    background: #111827;
-    border-color: #374151;
-    color: #f9fafb;
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--linen);
   }
   
   .table-row:hover {
-    background: #374151;
+    background: var(--ink);
   }
   
   .unauthorized-content {
-    background: #1f2937;
+    background: var(--ink);
   }
   
   .unauthorized-content h2 {
-    color: #f9fafb;
+    color: var(--linen);
   }
 }

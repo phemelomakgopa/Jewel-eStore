@@ -15,7 +15,7 @@ const AdminDashboard = () => {
     getOrderStatusCounts,
     getTopSellingProducts
   } = useAdmin();
-  const { user } = useAuth();
+  const { currentUser: user } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -100,20 +100,20 @@ const AdminDashboard = () => {
       <div className="admin-header">
         <div className="admin-welcome">
           <h1>Admin Dashboard</h1>
-          <p>Welcome back, {user?.displayName || user?.email}</p>
+          <p>Welcome back, {user?.displayName || user?.email}. Charts below use sample data; live orders are under View orders.</p>
         </div>
         <div className="admin-actions">
           <button 
             className="admin-btn secondary"
-            onClick={() => navigate('/admin/products')}
+            onClick={() => navigate('/adminpanel?tab=products')}
           >
-            Manage Products
+            Products
           </button>
           <button 
             className="admin-btn secondary"
-            onClick={() => navigate('/admin/orders')}
+            onClick={() => navigate('/adminpanel')}
           >
-            View Orders
+            View orders
           </button>
         </div>
       </div>
@@ -275,7 +275,7 @@ const AdminDashboard = () => {
               <h3>Recent Orders</h3>
               <button 
                 className="admin-btn primary"
-                onClick={() => navigate('/admin/orders')}
+                onClick={() => navigate('/adminpanel')}
               >
                 View All Orders
               </button>

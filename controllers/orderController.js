@@ -1,13 +1,18 @@
-const { Timestamp } = require('firebase-admin/firestore');
 const { db } = require('../config/firebaseConfig');
 
 // POST /orders - create new order
 const createOrder = async (req, res) => {
     try
     {
+        const { user, items } = req.body || {};
+        if (!user || !Array.isArray(items) || items.length === 0)
+        {
+            return res.status(400).json({ error: 'An order needs a user and at least one item' });
+        }
+
         const newOrder = {
-            user: req.body.user,
-            items: req.body.items,
+            user,
+            items,
             status: 'pending',
             timestamp: new Date(),
         };
@@ -33,12 +38,12 @@ const getAllOrders = async (req, res) => {
             orders.push({ id: doc.id, ...doc.data() })
         });
 
-        res.status(500).json(orders);
+        res.status(200).json(orders);
     }
     catch (error)
     {
-        console.error('Error fetching orrders: ', error);
-        res.status(500).json({ error: 'Failed to orders'});
+        console.error('Error fetching orders: ', error);
+        res.status(500).json({ error: 'Failed to fetch orders' });
     }
 };
 

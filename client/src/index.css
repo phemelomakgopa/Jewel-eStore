@@ -1,0 +1,273 @@
+/* Brand tokens — every component stylesheet should draw from these. */
+:root {
+  --linen: #f2ecdc;
+  --paper: #fbf8f1;
+  --taupe: #b6ab99;
+  --taupe-deep: #9c907c;
+  --espresso: #5c4033;
+  --espresso-dark: #47312a;
+  --gold: #d4af37;
+  --ink: #221c18;
+  --ink-soft: #5b5149;
+  --line: #d9cfbd;
+  --danger: #9e3b2c;
+  --success: #3f6b4e;
+
+  --font-display: "Italiana", "Didot", Georgia, serif;
+  --font-heading: "Fauna One", Georgia, serif;
+  --font-body: "Istok Web", "Segoe UI", system-ui, sans-serif;
+
+  --radius-sm: 6px;
+  --radius: 10px;
+  --shadow: 0 12px 28px rgba(34, 28, 24, 0.12);
+  --page-max: 1240px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--taupe);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--espresso);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+:focus-visible {
+  outline: 2px solid var(--espresso);
+  outline-offset: 2px;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-container > main {
+  flex: 1;
+}
+
+/* Shared page shell for content pages (cart, checkout, account…) */
+.page {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 2.5rem 1rem 4rem;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  margin: 0 0 1.5rem;
+}
+
+.surface {
+  background: var(--paper);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+/* Buttons — the older per-page .btn classes map onto these too */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--espresso);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--espresso-dark);
+}
+
+.btn-secondary,
+.btn-outline {
+  background: transparent;
+  color: var(--espresso);
+  border-color: var(--espresso);
+}
+
+.btn-secondary:hover:not(:disabled),
+.btn-outline:hover:not(:disabled) {
+  background: var(--espresso);
+  color: #fff;
+}
+
+.btn-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--espresso);
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* Form fields */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.field label {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.field input,
+.field select,
+.field textarea {
+  min-height: 44px;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fff;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--espresso);
+  box-shadow: 0 0 0 3px rgba(92, 64, 51, 0.15);
+}
+
+.field-error {
+  color: var(--danger);
+  font-size: 0.85rem;
+}
+
+.field input[aria-invalid="true"],
+.field select[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.form-alert {
+  background: #f6e3de;
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  margin: 0 0 1rem;
+}
+
+.form-note {
+  background: #e7efe6;
+  color: var(--success);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  margin: 0 0 1rem;
+}
+
+/* Empty and status states */
+.empty-state {
+  text-align: center;
+  max-width: 440px;
+  margin: 3rem auto;
+  padding: 2.5rem 1.5rem;
+  background: var(--paper);
+  border-radius: var(--radius);
+}
+
+.empty-state h2 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  margin: 0 0 0.5rem;
+}
+
+.empty-state p {
+  color: var(--ink-soft);
+  margin: 0 0 1.5rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100px;
+  z-index: 200;
+  background: var(--ink);
+  color: var(--linen);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-sm);
+}
+
+.skip-link:focus {
+  top: 1rem;
+}

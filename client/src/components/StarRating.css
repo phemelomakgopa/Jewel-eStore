@@ -14,7 +14,7 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  color: #d1d5db;
+  color: var(--line);
   transition: all 0.2s ease;
   position: relative;
   display: flex;
@@ -31,11 +31,11 @@
 }
 
 .star.filled {
-  color: #fbbf24;
+  color: var(--gold);
 }
 
 .star.partial {
-  color: #fbbf24;
+  color: var(--gold);
 }
 
 .star svg {
@@ -54,7 +54,7 @@
 
 .rating-value {
   font-weight: 500;
-  color: #374151;
+  color: var(--ink);
   font-size: 0.9em;
 }
 
@@ -98,13 +98,13 @@
 
 /* Interactive states */
 .star.interactive:focus {
-  outline: 2px solid #d4af37;
+  outline: 2px solid var(--espresso);
   outline-offset: 2px;
   border-radius: 2px;
 }
 
 .star.interactive:hover:not(:disabled) {
-  color: #f59e0b;
+  color: var(--gold);
 }
 
 /* Animation for rating changes */
@@ -115,35 +115,35 @@
 @keyframes starFill {
   0% {
     transform: scale(1);
-    color: #d1d5db;
+    color: var(--line);
   }
   50% {
     transform: scale(1.2);
-    color: #f59e0b;
+    color: var(--gold);
   }
   100% {
     transform: scale(1);
-    color: #fbbf24;
+    color: var(--gold);
   }
 }
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .star {
-    color: #4b5563;
+    color: var(--ink-soft);
   }
   
   .star.filled,
   .star.partial {
-    color: #fbbf24;
+    color: var(--gold);
   }
   
   .rating-value {
-    color: #f9fafb;
+    color: var(--linen);
   }
   
   .star.interactive:hover:not(:disabled) {
-    color: #f59e0b;
+    color: var(--gold);
   }
 }
 
@@ -163,7 +163,7 @@
 /* High contrast mode */
 @media (prefers-contrast: high) {
   .star {
-    color: #666666;
+    color: var(--ink-soft);
   }
   
   .star.filled,

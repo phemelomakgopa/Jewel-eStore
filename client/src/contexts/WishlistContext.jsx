@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { getProductById } from "../data/products";
 import { useAuth } from "./AuthContext";
+import { useToast } from "./ToastContext";
 
 const WishlistContext = createContext();
 
@@ -9,94 +12,82 @@ export const useWishlist = () => {
   return ctx;
 };
 
+// Saved per user so two people sharing a browser don't see each other's lists.
+const storageKey = (uid) => `wishlist:${uid}`;
+
+const load = (uid) => {
+  if (!uid) return [];
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey(uid)) || "[]");
+    return saved.filter((entry) => getProductById(entry.id));
+  } catch {
+    return [];
+  }
+};
+
 export const WishlistProvider = ({ children }) => {
   const { currentUser } = useAuth();
-  const [wishlistItems, setWishlistItems] = useState(() => {
-    try {
-      const saved = localStorage.getItem("wishlist");
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
+  const { notify } = useToast();
+  const location = useLocation();
+  const uid = currentUser?.uid;
+  const [entries, setEntries] = useState(() => load(uid));
 
-  // Save to localStorage whenever wishlist changes
   useEffect(() => {
-    try {
-      localStorage.setItem("wishlist", JSON.stringify(wishlistItems));
-    } catch (error) {
-      console.error("Failed to save wishlist to localStorage:", error);
-    }
-  }, [wishlistItems]);
+    setEntries(load(uid));
+  }, [uid]);
 
-  // Clear wishlist when user logs out
-  useEffect(() => {
-    if (!currentUser) {
-      setWishlistItems([]);
-    }
-  }, [currentUser]);
+  const persist = (next) => {
+    setEntries(next);
+    if (!uid) return;
+    try {
+      localStorage.setItem(storageKey(uid), JSON.stringify(next));
+    } catch {}
+  };
+
+  // Entries only hold id + date; product details come from the catalogue.
+  const wishlistItems = entries
+    .map((entry) => {
+      const product = getProductById(entry.id);
+      return product ? { ...product, addedAt: entry.addedAt } : null;
+    })
+    .filter(Boolean);
+
+  const isInWishlist = (productId) => entries.some((e) => e.id === Number(productId));
 
   const addToWishlist = (product) => {
-    if (!currentUser) {
-      alert("Please sign in to add items to your wishlist");
+    if (!uid) {
+      notify("Sign in to save pieces to your wishlist.", {
+        action: { label: "Sign in", to: "/signin", state: { from: location.pathname + location.search } },
+      });
       return false;
     }
-
-    const productToAdd = {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      category: product.category,
-      material: product.material,
-      weight: product.weight,
-      addedAt: new Date().toISOString(),
-    };
-
-    setWishlistItems((prev) => {
-      // Check if item already exists
-      if (prev.some((item) => item.id === product.id)) {
-        return prev; // Don't add duplicates
-      }
-      return [...prev, productToAdd];
-    });
-
+    if (isInWishlist(product.id)) return true;
+    persist([...entries, { id: Number(product.id), addedAt: new Date().toISOString() }]);
+    notify(`${product.name} saved to your wishlist.`, { action: { label: "View wishlist", to: "/wishlist" } });
     return true;
   };
 
   const removeFromWishlist = (productId) => {
-    setWishlistItems((prev) => prev.filter((item) => item.id !== productId));
-  };
-
-  const isInWishlist = (productId) => {
-    return wishlistItems.some((item) => item.id === productId);
+    persist(entries.filter((e) => e.id !== Number(productId)));
   };
 
   const toggleWishlist = (product) => {
     if (isInWishlist(product.id)) {
       removeFromWishlist(product.id);
-      return false; // Removed
-    } else {
-      return addToWishlist(product); // Returns true if added, false if not signed in
+      notify(`${product.name} removed from your wishlist.`);
+      return false;
     }
+    return addToWishlist(product);
   };
 
-  const clearWishlist = () => {
-    setWishlistItems([]);
-  };
+  const clearWishlist = () => persist([]);
 
-  const getWishlistCount = () => {
-    return wishlistItems.length;
-  };
+  const getWishlistCount = () => entries.length;
 
-  const moveToCart = (productId, addToCartFunction) => {
-    const item = wishlistItems.find((item) => item.id === productId);
-    if (item && addToCartFunction) {
-      addToCartFunction(item, 1);
-      removeFromWishlist(productId);
-      return true;
-    }
-    return false;
+  const moveToCart = (productId, addToCart) => {
+    const added = addToCart(productId, 1);
+    if (added) removeFromWishlist(productId);
+    return added;
   };
 
   const value = {
@@ -110,9 +101,5 @@ export const WishlistProvider = ({ children }) => {
     moveToCart,
   };
 
-  return (
-    <WishlistContext.Provider value={value}>
-      {children}
-    </WishlistContext.Provider>
-  );
+  return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;
 };

@@ -1,0 +1,40 @@
+rules_version = '2';
+
+// Suggested rules for the client app. Deploy with:
+//   firebase deploy --only firestore:rules
+// Keep the admin list in sync with client/src/config/adminList.js.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && (
+        request.auth.token.email in [
+          "agentp.shaun47@gmail.com",
+          "legendshaun47@gmail.com",
+          "manamelakamogelo71@gmail.com"
+        ]
+        || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
+      );
+    }
+
+    // A user can read and update their own profile, but never promote themselves.
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow create: if signedIn() && request.auth.uid == uid && request.resource.data.role == "user";
+      allow update: if signedIn() && request.auth.uid == uid
+                    && request.resource.data.role == resource.data.role;
+    }
+
+    // Customers create and read their own orders; admins read all and change status.
+    match /orders/{orderId} {
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow update: if isAdmin()
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status", "updatedAt"]);
+    }
+  }
+}

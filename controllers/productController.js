@@ -23,7 +23,7 @@ const getProductById = async (req, res) => {
         const doc = await db.collection("products").doc(id).get();
         if (!doc.exists)
         {
-            return res.status(404).json({ error: "Product not found "});
+            return res.status(404).json({ error: "Product not found"});
         }
         res.status(200).json({ id: doc.id, ...doc.data() });
     }

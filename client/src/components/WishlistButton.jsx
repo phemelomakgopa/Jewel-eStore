@@ -1,61 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { useWishlist } from '../contexts/WishlistContext';
-import './WishlistButton.css';
-import { FaHeart} from "react-icons/fa";
-import styles from './WishlistButton.css';
+import React from "react";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { useWishlist } from "../contexts/WishlistContext";
+import "./WishlistButton.css";
 
-const WishlistButton = ({ product, size = 'medium', showText = false, className = '' }) => {
+const WishlistButton = ({ product, size = "medium", showText = false, className = "" }) => {
   const { isInWishlist, toggleWishlist } = useWishlist();
-  const [isInList, setIsInList] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  useEffect(() => {
-    setIsInList(isInWishlist(product.id));
-  }, [product.id, isInWishlist]);
+  const saved = isInWishlist(product.id);
+  const label = saved ? "Remove from wishlist" : "Save to wishlist";
 
   const handleClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    setIsAnimating(true);
-    const wasAdded = toggleWishlist(product);
-    
-    // Update local state
-    setIsInList(!isInList);
-    
-    // Reset animation after a short delay
-    setTimeout(() => setIsAnimating(false), 300);
-    
-    // Show feedback message
-    if (wasAdded) {
-      // Could show a toast notification here
-      console.log(`${product.name} added to wishlist!`);
-    } else if (wasAdded === false && isInList) {
-      console.log(`${product.name} removed from wishlist!`);
-    }
-  };
-
-  const sizeClasses = {
-    small: 'wishlist-btn-small',
-    medium: 'wishlist-btn-medium',
-    large: 'wishlist-btn-large'
+    toggleWishlist(product);
   };
 
   return (
     <button
+      type="button"
       onClick={handleClick}
-      className={`wishlist-button ${sizeClasses[size]} ${isInList ? 'active' : ''} ${isAnimating ? 'animating' : ''} ${className}`}
-      title={isInList ? 'Remove from wishlist' : 'Add to wishlist'}
-      aria-label={isInList ? 'Remove from wishlist' : 'Add to wishlist'}
+      className={`wishlist-button wishlist-btn-${size} ${saved ? "active" : ""} ${showText ? "with-text" : ""} ${className}`}
+      aria-pressed={saved}
+      aria-label={showText ? undefined : `${label}: ${product.name}`}
+      title={label}
     >
-      <span className="heart-icon">
-        {isInList ? <FaHeart className={styles.heart} /> : '🤍'}
+      <span className="heart-icon" aria-hidden="true">
+        {saved ? <FaHeart /> : <FaRegHeart />}
       </span>
-      {showText && (
-        <span className="wishlist-text">
-          {isInList ? 'Remove from Wishlist' : 'Add to Wishlist'}
-        </span>
-      )}
+      {showText && <span className="wishlist-text">{saved ? "Saved to wishlist" : "Save to wishlist"}</span>}
     </button>
   );
 };

@@ -1,166 +1,145 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useSearch } from '../contexts/SearchContext';
-import { useNavigate } from 'react-router-dom';
-import './SearchBar.css';
+import React, { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import products, { CATEGORIES } from "../data/products";
+import { matchesQuery } from "../utils/catalog";
+import { formatPrice } from "../utils/format";
+import "./SearchBar.css";
 
-const SearchBar = ({ className = '', placeholder = "Search products..." }) => {
-  const { searchQuery, setSearchQuery, searchResults, isSearching } = useSearch();
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [localQuery, setLocalQuery] = useState(searchQuery);
-  const searchRef = useRef(null);
+const SearchBar = ({ className = "", placeholder = "Search rings, pearls, gold…" }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const listId = useId();
+  const ref = useRef(null);
+
+  const urlQuery = location.pathname === "/products" ? new URLSearchParams(location.search).get("q") || "" : "";
+  const [query, setQuery] = useState(urlQuery);
+  const [open, setOpen] = useState(false);
+  const [highlight, setHighlight] = useState(-1);
+
+  // Keep the box in step with the URL (e.g. after "Clear filters" or Back).
+  useEffect(() => setQuery(urlQuery), [urlQuery]);
+
+  const suggestions = useMemo(() => {
+    const q = query.trim();
+    if (q.length < 2) return [];
+    const categoryHits = CATEGORIES.filter((c) => c.label.toLowerCase().includes(q.toLowerCase())).map((c) => ({
+      key: `c-${c.slug}`,
+      label: `All ${c.label.toLowerCase()}`,
+      to: `/products?category=${c.slug}`,
+    }));
+    const productHits = products
+      .filter((p) => matchesQuery(p, q))
+      .slice(0, 5)
+      .map((p) => ({ key: `p-${p.id}`, label: p.name, meta: formatPrice(p.price), image: p.image, to: `/product/${p.id}` }));
+    return [...categoryHits, ...productHits];
+  }, [query]);
 
   useEffect(() => {
-    setLocalQuery(searchQuery);
-  }, [searchQuery]);
-
-  const handleInputChange = (e) => {
-    const value = e.target.value;
-    setLocalQuery(value);
-    setShowSuggestions(value.length > 0);
-  };
-
-  const handleSearch = (query = localQuery) => {
-    if (query.trim()) {
-      setSearchQuery(query.trim());
-      setShowSuggestions(false);
-      navigate('/search');
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-    if (e.key === 'Escape') {
-      setShowSuggestions(false);
-    }
-  };
-
-  const handleSuggestionClick = (suggestion) => {
-    setLocalQuery(suggestion);
-    handleSearch(suggestion);
-  };
-
-  const handleClear = () => {
-    setLocalQuery('');
-    setSearchQuery('');
-    setShowSuggestions(false);
-  };
-
-  // Get search suggestions based on current input
-  const getSuggestions = () => {
-    if (!localQuery.trim() || localQuery.length < 2) return [];
-    
-    const query = localQuery.toLowerCase();
-    const suggestions = new Set();
-    
-    // Add product name suggestions
-    searchResults.slice(0, 5).forEach(product => {
-      if (product.name.toLowerCase().includes(query)) {
-        suggestions.add(product.name);
-      }
-    });
-    
-    // Add category suggestions
-    const categories = ['rings', 'bracelets', 'earrings', 'necklaces'];
-    categories.forEach(category => {
-      if (category.includes(query)) {
-        suggestions.add(category.charAt(0).toUpperCase() + category.slice(1));
-      }
-    });
-    
-    // Add material suggestions
-    const materials = ['Gold', 'Silver', 'Diamond', 'Pearl', 'Bronze', 'Platinum'];
-    materials.forEach(material => {
-      if (material.toLowerCase().includes(query)) {
-        suggestions.add(material);
-      }
-    });
-    
-    return Array.from(suggestions).slice(0, 6);
-  };
-
-  const suggestions = getSuggestions();
-
-  // Close suggestions when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setShowSuggestions(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    const onClick = (e) => ref.current && !ref.current.contains(e.target) && setOpen(false);
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
-  return (
-    <div className={`search-bar ${className}`} ref={searchRef}>
-      <div className="search-input-container">
-        <div className="search-input-wrapper">
-          <svg 
-            className="search-icon" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-            onClick={() => handleSearch()}
-          >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
-            />
-          </svg>
-          
-          <input
-            type="text"
-            value={localQuery}
-            onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
-            onFocus={() => localQuery.length > 0 && setShowSuggestions(true)}
-            placeholder={placeholder}
-            className="search-input"
-          />
-          
-          {localQuery && (
-            <button 
-              className="clear-button"
-              onClick={handleClear}
-              type="button"
-            >
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          )}
-          
-          {isSearching && (
-            <div className="search-loading">
-              <div className="loading-spinner"></div>
-            </div>
-          )}
-        </div>
+  const go = (to) => {
+    setOpen(false);
+    setHighlight(-1);
+    navigate(to);
+  };
 
-        {showSuggestions && suggestions.length > 0 && (
-          <div className="search-suggestions">
-            {suggestions.map((suggestion, index) => (
-              <button
-                key={index}
-                className="suggestion-item"
-                onClick={() => handleSuggestionClick(suggestion)}
-              >
-                <svg className="suggestion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <span>{suggestion}</span>
-              </button>
-            ))}
-          </div>
+  const submit = (e) => {
+    e.preventDefault();
+    if (highlight >= 0 && suggestions[highlight]) return go(suggestions[highlight].to);
+    const q = query.trim();
+    go(q ? `/products?q=${encodeURIComponent(q)}` : "/products");
+  };
+
+  const onKeyDown = (e) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setOpen(true);
+      setHighlight((h) => Math.min(h + 1, suggestions.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlight((h) => Math.max(h - 1, -1));
+    } else if (e.key === "Escape") {
+      setOpen(false);
+      setHighlight(-1);
+    }
+  };
+
+  const clear = () => {
+    setQuery("");
+    setHighlight(-1);
+    if (urlQuery) {
+      const params = new URLSearchParams(location.search);
+      params.delete("q");
+      navigate(`/products${params.toString() ? `?${params}` : ""}`);
+    }
+  };
+
+  const showList = open && suggestions.length > 0;
+
+  return (
+    <form role="search" className={`search-bar ${className}`} ref={ref} onSubmit={submit}>
+      <div className={`search-input-wrapper ${query ? "has-value" : ""}`}>
+        <button type="submit" className="search-icon-btn" aria-label="Search">
+          <svg className="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </button>
+
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setOpen(true);
+            setHighlight(-1);
+          }}
+          onFocus={() => setOpen(true)}
+          onKeyDown={onKeyDown}
+          placeholder={placeholder}
+          className="search-input"
+          aria-label="Search products"
+          role="combobox"
+          aria-expanded={showList}
+          aria-controls={listId}
+          aria-autocomplete="list"
+          aria-activedescendant={highlight >= 0 ? `${listId}-${highlight}` : undefined}
+        />
+
+        {query && (
+          <button className="clear-button" onClick={clear} type="button" aria-label="Clear search">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         )}
       </div>
-    </div>
+
+      {showList && (
+        <ul className="search-suggestions" id={listId} role="listbox">
+          {suggestions.map((s, i) => (
+            <li
+              key={s.key}
+              id={`${listId}-${i}`}
+              role="option"
+              aria-selected={i === highlight}
+              className={`suggestion-item ${i === highlight ? "highlighted" : ""}`}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                go(s.to);
+              }}
+              onMouseEnter={() => setHighlight(i)}
+            >
+              {s.image ? <img src={s.image} alt="" className="suggestion-thumb" /> : <span className="suggestion-thumb" />}
+              <span className="suggestion-label">{s.label}</span>
+              {s.meta && <span className="suggestion-meta">{s.meta}</span>}
+            </li>
+          ))}
+        </ul>
+      )}
+    </form>
   );
 };
 

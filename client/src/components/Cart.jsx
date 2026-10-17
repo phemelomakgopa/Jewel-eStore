@@ -1,182 +1,203 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
+import { useAuth } from "../contexts/AuthContext";
+import { formatPrice } from "../utils/format";
 import "./Cart.css";
-import Flat_Pearls_Bracelet from "../assets/Flat_Pearls_Bracelet.jpg";
-import GearDiamond_Gold_Ring from "../assets/GearDiamond+Gold_Ring.jpg";
+
+export const OrderTotals = ({ subtotal, discount, discountCode, shipping, tax, total }) => (
+  <dl className="totals">
+    <div>
+      <dt>Subtotal</dt>
+      <dd>{formatPrice(subtotal)}</dd>
+    </div>
+    {discount > 0 && (
+      <div className="totals-discount">
+        <dt>Discount ({discountCode})</dt>
+        <dd>−{formatPrice(discount)}</dd>
+      </div>
+    )}
+    <div>
+      <dt>Delivery</dt>
+      <dd>{shipping === 0 ? "Free" : formatPrice(shipping)}</dd>
+    </div>
+    <div>
+      <dt>VAT (15%)</dt>
+      <dd>{formatPrice(tax)}</dd>
+    </div>
+    <div className="totals-grand">
+      <dt>Total</dt>
+      <dd>{formatPrice(total)}</dd>
+    </div>
+  </dl>
+);
 
 export default function Cart() {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const {
-    items: cartItems,
+    items,
     removeItem,
     updateQuantity,
     subtotal,
+    discount,
     shipping,
     tax,
     total,
-    discount,
     discountCode,
-    setDiscountCode,
+    discountType,
+    discountQualifies,
+    discountMinimum,
     applyDiscountCode,
     removeDiscountCode,
     discountError,
+    getTotalItems,
   } = useCart();
-  
-  const [localDiscountCode, setLocalDiscountCode] = useState(discountCode || '');
-  
+
+  const [code, setCode] = useState("");
+
   const handleApplyDiscount = (e) => {
     e.preventDefault();
-    applyDiscountCode(localDiscountCode);
-  };
-  
-  const handleRemoveDiscount = () => {
-    removeDiscountCode();
-    setLocalDiscountCode('');
+    if (applyDiscountCode(code)) setCode("");
   };
 
-  // Format currency in South African Rand
-  const formatCurrency = (amount) => {
-    return `R${(amount / 100).toFixed(2)}`;
+  const checkout = () => {
+    if (currentUser) navigate("/checkout");
+    else navigate("/signin", { state: { from: "/checkout" } });
   };
+
+  if (items.length === 0) {
+    return (
+      <div className="page">
+        <div className="empty-state">
+          <h2>Your cart is empty</h2>
+          <p>Pieces you add will wait here until you're ready to check out.</p>
+          <Link to="/products" className="btn btn-primary">
+            Browse the shop
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const itemCount = getTotalItems();
 
   return (
-    <div className="cart-page">
-      <h1>Your Cart</h1>
-      {cartItems.length === 0 ? (
-        <p className="empty-cart">Your cart is empty.</p>
-      ) : (
-        <>
-          <div className="cart-items">
-            {cartItems.map((item) => (
-              <div key={`${item.id}-${item.size || ''}`} className="cart-item">
-                <img src={item.image} alt={item.name} className="item-image" />
-                <div className="item-details">
-                  <h3>{item.name}</h3>
-                  <p className="item-price">R{(item.price / 100).toFixed(2)}</p>
-                  {item.size && <p className="item-size">Size: {item.size}</p>}
-                  
-                  <div className="quantity-controls">
-                    <button 
-                      className="quantity-btn"
-                      onClick={() => {
-                        if (item.quantity > 1) {
-                          updateQuantity(item.id, item.size, item.quantity - 1);
-                        } else {
-                          removeItem(item.id, item.size);
-                        }
-                      }}
+    <div className="page cart-page">
+      <h1 className="page-title">
+        Your cart <span className="cart-count">({itemCount} {itemCount === 1 ? "item" : "items"})</span>
+      </h1>
+
+      <div className="cart-layout">
+        <ul className="cart-items">
+          {items.map((item) => (
+            <li key={`${item.id}-${item.size || ""}`} className="cart-item">
+              <Link to={`/product/${item.id}`} className="item-image">
+                <img src={item.image} alt="" />
+              </Link>
+
+              <div className="item-details">
+                <h2 className="item-name">
+                  <Link to={`/product/${item.id}`}>{item.name}</Link>
+                </h2>
+                <p className="item-price">{formatPrice(item.price)} each</p>
+                {item.size && <p className="item-size">Size: {item.size}</p>}
+
+                <div className="item-controls">
+                  <div className="quantity-controls" role="group" aria-label={`Quantity of ${item.name}`}>
+                    <button
+                      type="button"
+                      onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}
                       aria-label="Decrease quantity"
                     >
                       −
                     </button>
-                    <span className="quantity">{item.quantity}</span>
-                    <button 
-                      className="quantity-btn"
+                    <span aria-live="polite">{item.quantity}</span>
+                    <button
+                      type="button"
                       onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
+                      disabled={item.quantity >= item.stock}
                       aria-label="Increase quantity"
                     >
                       +
                     </button>
                   </div>
-                  
-                  <button 
-                    className="remove-btn"
-                    onClick={() => removeItem(item.id, item.size)}
-                  >
+                  <button type="button" className="btn-link remove-btn" onClick={() => removeItem(item.id, item.size)}>
                     Remove
                   </button>
                 </div>
-                <div className="item-total">
-                  R{((item.price * item.quantity) / 100).toFixed(2)}
-                </div>
+                {item.quantity >= item.stock && <p className="stock-note">That's all we have in stock.</p>}
               </div>
-            ))}
-          </div>
 
-          <div className="cart-summary">
-            <h3>Order Summary</h3>
-            
-            {/* Discount Code */}
-            <div className="discount-section">
-              {discountCode && discount.amount > 0 ? (
-                <div className="discount-applied">
-                  <span>Discount Applied: {discountCode}</span>
-                  {discount.shippingDiscount ? (
-                    <span className="discount-amount">Free Shipping</span>
+              <div className="item-total">{formatPrice(item.price * item.quantity)}</div>
+            </li>
+          ))}
+        </ul>
+
+        <aside className="cart-summary" aria-labelledby="summary-heading">
+          <h2 id="summary-heading">Order summary</h2>
+
+          <div className="discount-section">
+            {discountCode ? (
+              <div className="discount-applied">
+                <div>
+                  <strong>{discountCode}</strong>
+                  {discountQualifies ? (
+                    <span>{discountType === "shipping" ? "Free delivery applied" : "Discount applied"}</span>
                   ) : (
-                    <span className="discount-amount">-R{(discount.amount / 100).toFixed(2)}</span>
+                    <span className="discount-pending">
+                      Add {formatPrice(discountMinimum - subtotal)} more to use this code
+                    </span>
                   )}
-                  <button 
-                    type="button" 
-                    className="remove-discount"
-                    onClick={handleRemoveDiscount}
-                  >
-                    Remove
-                  </button>
                 </div>
-              ) : (
-                <form onSubmit={handleApplyDiscount} className="discount-form">
-                  <input
-                    type="text"
-                    placeholder="Discount Code"
-                    value={localDiscountCode}
-                    onChange={(e) => setLocalDiscountCode(e.target.value)}
-                  />
-                  <button type="submit" className="apply-discount">
-                    Apply
-                  </button>
-                </form>
-              )}
-              {discountError && (
-                <div className="error-message">{discountError}</div>
-              )}
-            </div>
-            
-            <div className="summary-row">
-              <span>Subtotal</span>
-              <span>{formatCurrency(subtotal)}</span>
-            </div>
-            
-            {discount.shippingDiscount && shipping === 0 ? (
-              <div className="summary-row discount">
-                <span>Shipping</span>
-                <span>Free</span>
+                <button type="button" className="btn-link" onClick={removeDiscountCode}>
+                  Remove
+                </button>
               </div>
             ) : (
-              <div className="summary-row">
-                <span>Shipping</span>
-                <span>{shipping > 0 ? formatCurrency(shipping) : "Free"}</span>
-              </div>
+              <form onSubmit={handleApplyDiscount} className="discount-form">
+                <label htmlFor="discount-code" className="visually-hidden">
+                  Discount code
+                </label>
+                <input
+                  id="discount-code"
+                  type="text"
+                  placeholder="Discount code"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  aria-invalid={!!discountError}
+                  aria-describedby={discountError ? "discount-error" : undefined}
+                  autoCapitalize="characters"
+                />
+                <button type="submit" className="btn btn-secondary">
+                  Apply
+                </button>
+              </form>
             )}
-            
-            <div className="summary-row">
-              <span>Tax (15%)</span>
-              <span>{formatCurrency(tax)}</span>
-            </div>
-            
-            {discount.amount > 0 && (
-              <div className="summary-row discount">
-                <span>Discount ({discountCode})</span>
-                <span>-{formatCurrency(discount.amount)}</span>
-              </div>
+            {discountError && (
+              <p id="discount-error" className="field-error">
+                {discountError}
+              </p>
             )}
-            
-            <div className="summary-row total">
-              <span>Total</span>
-              <span>{formatCurrency(total)}</span>
-            </div>
-            
-            <button
-              className="checkout-btn"
-              onClick={() => navigate("/checkout")}
-              disabled={cartItems.length === 0}
-            >
-              Proceed to Checkout
-            </button>
           </div>
-        </>
-      )}
+
+          <OrderTotals
+            subtotal={subtotal}
+            discount={discount}
+            discountCode={discountCode}
+            shipping={shipping}
+            tax={tax}
+            total={total}
+          />
+
+          <button type="button" className="btn btn-primary checkout-btn" onClick={checkout}>
+            {currentUser ? "Check out" : "Sign in to check out"}
+          </button>
+          <Link to="/products" className="continue-link">
+            Continue shopping
+          </Link>
+        </aside>
+      </div>
     </div>
   );
 }

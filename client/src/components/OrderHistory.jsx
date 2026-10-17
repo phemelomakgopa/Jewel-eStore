@@ -1,229 +1,207 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { Link } from 'react-router-dom';
-import './OrderHistory.css';
+import React, { useCallback, useEffect, useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { getProductById } from "../data/products";
+import { formatDate, formatPrice, orderAmountToCents } from "../utils/format";
+import "./OrderHistory.css";
+
+const STATUS = {
+  placed: { label: "Placed", tone: "info" },
+  paid: { label: "Paid, preparing", tone: "info" },
+  awaiting_payment: { label: "Awaiting payment", tone: "warn" },
+  processing: { label: "Preparing", tone: "info" },
+  shipped: { label: "Shipped", tone: "info" },
+  delivered: { label: "Delivered", tone: "ok" },
+  completed: { label: "Completed", tone: "ok" },
+  cancelled: { label: "Cancelled", tone: "bad" },
+};
+
+const statusOf = (s) => STATUS[s] || { label: s || "Placed", tone: "info" };
 
 export default function OrderHistory() {
   const { currentUser, getUserOrders } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [activeOrder, setActiveOrder] = useState(null);
+  const [error, setError] = useState("");
+  const [openId, setOpenId] = useState(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      setOrders(await getUserOrders());
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      setError("We couldn't load your orders. Check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, [getUserOrders]);
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      if (!currentUser) {
-        setLoading(false);
-        return;
-      }
-      
-      try {
-        setLoading(true);
-        const userOrders = await getUserOrders(currentUser.uid);
-        setOrders(userOrders);
-      } catch (err) {
-        console.error('Error fetching orders:', err);
-        setError('Failed to load orders. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (currentUser) load();
+  }, [currentUser, load]);
 
-    fetchOrders();
-  }, [currentUser, getUserOrders]);
-
-  const formatDate = (timestamp) => {
-    if (!timestamp?.toDate) return 'Date not available';
-    return new Date(timestamp.toDate()).toLocaleDateString('en-ZA', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
+  if (!currentUser) return <Navigate to="/signin" state={{ from: "/orders" }} replace />;
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="spinner"></div>
-        <p>Loading your orders...</p>
-      </div>
-    );
-  }
-
-  if (!currentUser) {
-    return (
-      <div className="auth-required">
-        <h2>Sign In Required</h2>
-        <p>Please sign in to view your order history.</p>
-        <Link to="/login" className="btn btn-primary">
-          Sign In
-        </Link>
+      <div className="page">
+        <h1 className="page-title">Your orders</h1>
+        <div className="orders-loading" role="status">
+          <span className="spinner" aria-hidden="true"></span> Loading your orders…
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="error-message">
-        <p>{error}</p>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="btn btn-primary"
-        >
-          Try Again
-        </button>
+      <div className="page">
+        <div className="empty-state">
+          <h2>Orders unavailable</h2>
+          <p>{error}</p>
+          <button type="button" onClick={load} className="btn btn-primary">
+            Try again
+          </button>
+        </div>
       </div>
     );
   }
 
   if (orders.length === 0) {
     return (
-      <div className="empty-orders">
-        <h2>No Orders Found</h2>
-        <p>You haven't placed any orders yet.</p>
-        <Link to="/products" className="btn btn-primary">
-          Start Shopping
-        </Link>
+      <div className="page">
+        <div className="empty-state">
+          <h2>No orders yet</h2>
+          <p>When you place an order it will appear here with its status.</p>
+          <Link to="/products" className="btn btn-primary">
+            Start shopping
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="order-history-container">
-      <h1>Your Orders</h1>
-      
-      <div className="orders-list">
-        {orders.map((order) => (
-          <div 
-            key={order.id} 
-            className={`order-card ${activeOrder === order.id ? 'expanded' : ''}`}
-          >
-            <div 
-              className="order-summary"
-              onClick={() => setActiveOrder(activeOrder === order.id ? null : order.id)}
-            >
-              <div className="order-header">
-                <div>
-                  <h3>Order #{order.id.substring(0, 8)}</h3>
-                  <p className="order-date">Placed on {formatDate(order.createdAt)}</p>
-                </div>
-                <div className="order-status">
-                  <span className={`status-badge ${order.status || 'processing'}`}>
-                    {order.status || 'Processing'}
-                  </span>
-                </div>
-              </div>
-              
-              <div className="order-preview">
-                <div className="order-items-preview">
-                  {order.items.slice(0, 3).map((item, index) => (
-                    <div key={index} className="preview-item">
-                      <img 
-                        src={item.image} 
-                        alt={item.name} 
-                        className="preview-image"
-                      />
-                      {index === 2 && order.items.length > 3 && (
-                        <div className="more-items">+{order.items.length - 3} more</div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="order-total">
-                  <span>Total: </span>
-                  <strong>R{order.amounts?.total?.toFixed(2) || '0.00'}</strong>
-                </div>
-                
-                <div className="toggle-details">
-                  {activeOrder === order.id ? 'Hide details' : 'View details'}
-                </div>
-              </div>
-            </div>
-            
-            {activeOrder === order.id && (
-              <div className="order-details">
-                <div className="shipping-address">
-                  <h4>Shipping Address</h4>
-                  {order.shippingAddress ? (
+    <div className="page">
+      <h1 className="page-title">Your orders</h1>
+
+      <ul className="orders-list">
+        {orders.map((order) => {
+          const open = openId === order.id;
+          const status = statusOf(order.status);
+          const cents = (amount) => orderAmountToCents(order, amount);
+          const addr = order.shippingAddress || {};
+
+          return (
+            <li key={order.id} className={`order-card ${open ? "expanded" : ""}`}>
+              <button
+                type="button"
+                className="order-summary"
+                onClick={() => setOpenId(open ? null : order.id)}
+                aria-expanded={open}
+                aria-controls={`order-${order.id}`}
+              >
+                <span className="order-head">
+                  <span className="order-number">Order {order.id.slice(0, 8).toUpperCase()}</span>
+                  <span className="order-date">{formatDate(order.createdAt) || "Date unavailable"}</span>
+                </span>
+
+                <span className="order-thumbs" aria-hidden="true">
+                  {order.items.slice(0, 3).map((item, i) => {
+                    const src = getProductById(item.id)?.image || item.image;
+                    return src ? <img key={i} src={src} alt="" /> : null;
+                  })}
+                  {order.items.length > 3 && <span className="more-items">+{order.items.length - 3}</span>}
+                </span>
+
+                <span className={`status-badge status-${status.tone}`}>{status.label}</span>
+                <span className="order-total">{formatPrice(cents(order.amounts?.total))}</span>
+                <span className="toggle-details">{open ? "Hide details" : "Details"}</span>
+              </button>
+
+              {open && (
+                <div className="order-details" id={`order-${order.id}`}>
+                  <div className="detail-block">
+                    <h2>Items</h2>
+                    <ul className="detail-items">
+                      {order.items.map((item, i) => (
+                        <li key={i}>
+                          {getProductById(item.id) ? (
+                            <Link to={`/product/${item.id}`}>{item.name}</Link>
+                          ) : (
+                            <span>{item.name}</span>
+                          )}
+                          <span className="muted">× {item.quantity}</span>
+                          <span>{formatPrice(cents(item.price) * item.quantity)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="detail-block">
+                    <h2>Delivery</h2>
                     <address>
-                      {order.shippingAddress.name && <p><strong>{order.shippingAddress.name}</strong></p>}
-                      {order.shippingAddress.street && <p>{order.shippingAddress.street}</p>}
-                      {order.shippingAddress.suburb && <p>{order.shippingAddress.suburb}</p>}
-                      <p>
-                        {order.shippingAddress.city && `${order.shippingAddress.city}, `}
-                        {order.shippingAddress.province && `${order.shippingAddress.province} `}
-                        {order.shippingAddress.postalCode && `${order.shippingAddress.postalCode}`}
-                      </p>
-                      {order.shippingAddress.phone && <p>Phone: {order.shippingAddress.phone}</p>}
+                      {addr.fullName || addr.name}
+                      <br />
+                      {[addr.street || addr.streetAddress, addr.city, addr.province || addr.state, addr.postalCode]
+                        .filter(Boolean)
+                        .join(", ")}
+                      {addr.phone && (
+                        <>
+                          <br />
+                          {addr.phone}
+                        </>
+                      )}
                     </address>
-                  ) : (
-                    <p>No shipping address provided</p>
-                  )}
-                </div>
-                
-                <div className="order-items-details">
-                  <h4>Order Items</h4>
-                  <div className="items-list">
-                    {order.items.map((item, index) => (
-                      <div key={index} className="order-item">
-                        <div className="item-image">
-                          <img src={item.image} alt={item.name} />
-                        </div>
-                        <div className="item-details">
-                          <h5>{item.name}</h5>
-                          <p>Quantity: {item.quantity}</p>
-                          <p>Price: R{item.price.toFixed(2)} each</p>
-                        </div>
-                        <div className="item-total">
-                          <strong>R{(item.price * item.quantity).toFixed(2)}</strong>
-                        </div>
+                  </div>
+
+                  <div className="detail-block">
+                    <h2>Payment</h2>
+                    <dl className="detail-totals">
+                      <div>
+                        <dt>Subtotal</dt>
+                        <dd>{formatPrice(cents(order.amounts?.subtotal))}</dd>
                       </div>
-                    ))}
+                      {order.amounts?.discount > 0 && (
+                        <div>
+                          <dt>Discount{order.discountCode ? ` (${order.discountCode})` : ""}</dt>
+                          <dd>−{formatPrice(cents(order.amounts.discount))}</dd>
+                        </div>
+                      )}
+                      <div>
+                        <dt>Delivery</dt>
+                        <dd>{order.amounts?.shipping ? formatPrice(cents(order.amounts.shipping)) : "Free"}</dd>
+                      </div>
+                      <div>
+                        <dt>VAT</dt>
+                        <dd>{formatPrice(cents(order.amounts?.tax))}</dd>
+                      </div>
+                      <div className="grand">
+                        <dt>Total</dt>
+                        <dd>{formatPrice(cents(order.amounts?.total))}</dd>
+                      </div>
+                    </dl>
+                    {order.status === "awaiting_payment" && (
+                      <p className="eft-reminder">
+                        Pay by EFT using reference <strong>{order.id}</strong>. Bank details are in your confirmation
+                        email.
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="order-actions">
+                    <button type="button" className="btn btn-secondary" onClick={() => window.print()}>
+                      Print receipt
+                    </button>
                   </div>
                 </div>
-                
-                <div className="order-summary-details">
-                  <h4>Order Summary</h4>
-                  <div className="summary-row">
-                    <span>Subtotal:</span>
-                    <span>R{order.amounts?.subtotal?.toFixed(2) || '0.00'}</span>
-                  </div>
-                  <div className="summary-row">
-                    <span>Shipping:</span>
-                    <span>R{order.amounts?.shipping?.toFixed(2) || '0.00'}</span>
-                  </div>
-                  <div className="summary-row">
-                    <span>Tax:</span>
-                    <span>R{order.amounts?.tax?.toFixed(2) || '0.00'}</span>
-                  </div>
-                  <div className="summary-row total">
-                    <span>Total:</span>
-                    <strong>R{order.amounts?.total?.toFixed(2) || '0.00'}</strong>
-                  </div>
-                </div>
-                
-                <div className="order-actions">
-                  <button 
-                    className="btn btn-secondary"
-                    onClick={() => window.print()}
-                  >
-                    Print Invoice
-                  </button>
-                  <Link 
-                    to={`/track-order/${order.id}`} 
-                    className="btn btn-outline"
-                  >
-                    Track Order
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }

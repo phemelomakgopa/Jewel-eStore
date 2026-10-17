@@ -1,13 +1,53 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { getProductById } from "../data/products";
+import { formatPrice } from "../utils/format";
+import { useToast } from "./ToastContext";
 
 const CartContext = createContext();
 
-// Sample discount codes (in a real app, these would come from your database)
+// All amounts are in cents.
+export const SHIPPING_FLAT = 6000;
+export const VAT_RATE = 0.15;
+
+// Sample discount codes (in a real app, these would be validated server-side)
 const DISCOUNT_CODES = {
-  "WELCOME10": { type: 'percentage', value: 10, minPurchase: 0 },
-  "FREESHIP": { type: 'shipping', value: 0, minPurchase: 50 },
-  "SAVE20": { type: 'percentage', value: 20, minPurchase: 100 },
+  WELCOME10: { type: "percentage", value: 10, minPurchase: 0 },
+  FREESHIP: { type: "shipping", value: 0, minPurchase: 5000 },
+  SAVE20: { type: "percentage", value: 20, minPurchase: 10000 },
 };
+
+const readStorage = (key, fallback) => {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+const writeStorage = (key, value) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {}
+};
+
+// Price, name, image and stock always come from the catalogue, never from
+// whatever was saved in the browser — saved carts can be stale.
+const hydrateItem = ({ id, quantity, size }) => {
+  const product = getProductById(id);
+  if (!product || product.stock <= 0) return null;
+  return {
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    image: product.image,
+    stock: product.stock,
+    size: size || null,
+    quantity: Math.min(Math.max(1, Number(quantity) || 1), product.stock),
+  };
+};
+
+const sameLine = (item, id, size) => item.id === id && (item.size || null) === (size || null);
 
 export const useCart = () => {
   const ctx = useContext(CartContext);
@@ -16,175 +56,140 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }) => {
-  const [items, setItems] = useState(() => {
-    try {
-      const raw = localStorage.getItem("cart");
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  });
-  
-  const [discountCode, setDiscountCode] = useState('');
-  const [discountError, setDiscountError] = useState('');
-  const [appliedDiscount, setAppliedDiscount] = useState(null);
+  const { notify } = useToast();
+  const [items, setItems] = useState(() => readStorage("cart", []).map(hydrateItem).filter(Boolean));
+  const [discountCode, setDiscountCode] = useState(() => readStorage("cartDiscount", null));
+  const [discountError, setDiscountError] = useState("");
 
   useEffect(() => {
-    try {
-      localStorage.setItem("cart", JSON.stringify(items));
-    } catch {}
+    writeStorage(
+      "cart",
+      items.map(({ id, quantity, size }) => ({ id, quantity, size }))
+    );
   }, [items]);
 
-  const addToCart = (product, quantity = 1, options = {}) => {
-    setItems((prev) => {
-      const key = `${product.id}-${options.size || ""}`;
-      const idx = prev.findIndex((i) => `${i.id}-${i.size || ""}` === key);
-      if (idx !== -1) {
-        const next = [...prev];
-        next[idx] = { ...next[idx], quantity: next[idx].quantity + quantity };
-        return next;
-      }
-      return [
-        ...prev,
-        {
-          id: product.id,
-          name: product.name,
-          price: Number(product.price) || 0,
-          image: product.image || "",
-          size: options.size,
-          quantity,
-        },
-      ];
-    });
-  };
+  useEffect(() => {
+    writeStorage("cartDiscount", discountCode);
+  }, [discountCode]);
 
-  const updateQuantity = (id, size, quantity) => {
+  const addToCart = useCallback(
+    (productOrId, quantity = 1, options = {}) => {
+      const id = typeof productOrId === "object" ? productOrId.id : productOrId;
+      const product = getProductById(id);
+      if (!product) return false;
+
+      const existing = items.find((i) => sameLine(i, product.id, options.size));
+      const current = existing?.quantity || 0;
+      const allowed = Math.min(quantity, product.stock - current);
+
+      if (allowed <= 0) {
+        notify(`You already have all ${product.stock} of the ${product.name} in your cart.`);
+        return false;
+      }
+
+      setItems((prev) => {
+        if (prev.some((i) => sameLine(i, product.id, options.size))) {
+          return prev.map((i) =>
+            sameLine(i, product.id, options.size) ? { ...i, quantity: i.quantity + allowed } : i
+          );
+        }
+        return [...prev, hydrateItem({ id: product.id, quantity: allowed, size: options.size })];
+      });
+
+      notify(
+        allowed < quantity
+          ? `Only ${allowed} more ${product.name} available — added to your cart.`
+          : `${product.name} added to your cart.`,
+        { action: { label: "View cart", to: "/cart" } }
+      );
+      return true;
+    },
+    [items, notify]
+  );
+
+  const updateQuantity = useCallback((id, size, quantity) => {
     setItems((prev) =>
       prev
-        .map((i) =>
-          i.id === id && (i.size || "") === (size || "") ? { ...i, quantity } : i
-        )
+        .map((i) => (sameLine(i, id, size) ? { ...i, quantity: Math.min(quantity, i.stock) } : i))
         .filter((i) => i.quantity > 0)
     );
-  };
+  }, []);
 
-  const removeFromCart = (id, size) => {
-    setItems((prev) => prev.filter((i) => !(i.id === id && (i.size || "") === (size || ""))));
-  };
+  const removeFromCart = useCallback((id, size) => {
+    setItems((prev) => prev.filter((i) => !sameLine(i, id, size)));
+  }, []);
 
-  const clearCart = () => setItems([]);
+  const clearCart = useCallback(() => {
+    setItems([]);
+    setDiscountCode(null);
+  }, []);
 
-  const applyDiscountCode = (code) => {
-    const upperCode = code.trim().toUpperCase();
-    
-    if (!upperCode) {
-      setDiscountError('Please enter a discount code');
-      return false;
-    }
-    
-    if (!DISCOUNT_CODES[upperCode]) {
-      setDiscountError('Invalid discount code');
-      return false;
-    }
-    
-    const discountInfo = DISCOUNT_CODES[upperCode];
-    
-    if (subtotal < discountInfo.minPurchase) {
-      setDiscountError(`Minimum purchase of $${discountInfo.minPurchase} required`);
-      return false;
-    }
-    
-    setAppliedDiscount({
-      code: upperCode,
-      type: discountInfo.type,
-      value: discountInfo.value
-    });
-    
-    setDiscountError('');
-    return true;
-  };
-  
-  const removeDiscountCode = () => {
-    setAppliedDiscount(null);
-    setDiscountCode('');
-    setDiscountError('');
-  };
+  const subtotal = useMemo(() => items.reduce((sum, i) => sum + i.price * i.quantity, 0), [items]);
 
-    const subtotal = useMemo(() => {
-    const amountInCents = items.reduce((sum, i) => sum + Math.round(i.price * 100) * i.quantity, 0);
-    return amountInCents / 100;
-  }, [items]);
+  // A code that stops qualifying (e.g. items removed) is kept but not applied,
+  // and the cart explains why.
+  const discountInfo = discountCode ? DISCOUNT_CODES[discountCode] : null;
+  const discountQualifies = !!discountInfo && subtotal >= discountInfo.minPurchase;
 
   const discount = useMemo(() => {
-    if (!appliedDiscount) return { amount: 0, type: 'none' };
-
-    const subtotalInCents = Math.round(subtotal * 100);
-    const discountInfo = DISCOUNT_CODES[appliedDiscount.code.toUpperCase()];
-
-    if (!discountInfo || subtotal < discountInfo.minPurchase) {
-      return { amount: 0, type: 'none' };
-    }
-
-    if (discountInfo.type === 'shipping') {
-      return { amount: 0, type: 'shipping', shippingDiscount: true };
-    }
-
-    let amountInCents = 0;
-    if (discountInfo.type === 'percentage') {
-      amountInCents = Math.round(subtotalInCents * (discountInfo.value / 100));
-    } else if (discountInfo.type === 'fixed') {
-      amountInCents = Math.min(Math.round(discountInfo.value * 100), subtotalInCents);
-    }
-
-    return { amount: amountInCents / 100, type: discountInfo.type };
-  }, [appliedDiscount, subtotal]);
+    if (!discountQualifies) return 0;
+    if (discountInfo.type === "percentage") return Math.round(subtotal * (discountInfo.value / 100));
+    return 0;
+  }, [discountQualifies, discountInfo, subtotal]);
 
   const shipping = useMemo(() => {
     if (subtotal === 0) return 0;
-    if (appliedDiscount && DISCOUNT_CODES[appliedDiscount.code]?.type === 'shipping') {
-      return 0; // Free shipping
+    if (discountQualifies && discountInfo.type === "shipping") return 0;
+    return SHIPPING_FLAT;
+  }, [subtotal, discountQualifies, discountInfo]);
+
+  const tax = useMemo(() => Math.round(Math.max(0, subtotal - discount) * VAT_RATE), [subtotal, discount]);
+  const total = Math.max(0, subtotal - discount + shipping + tax);
+
+  const applyDiscountCode = (code) => {
+    const upper = code.trim().toUpperCase();
+    if (!upper) {
+      setDiscountError("Enter a discount code.");
+      return false;
     }
-    return 60.00; // R60 flat rate shipping
-  }, [subtotal, appliedDiscount]);
-
-  const tax = useMemo(() => {
-    const subtotalInCents = Math.round(subtotal * 100);
-    const discountInCents = Math.round(discount.amount * 100);
-    const taxableAmountInCents = Math.max(0, subtotalInCents - discountInCents);
-    const taxInCents = Math.round(taxableAmountInCents * 0.15);
-    return taxInCents / 100;
-  }, [subtotal, discount]);
-
-  const total = useMemo(() => {
-    const subtotalInCents = Math.round(subtotal * 100);
-    const discountInCents = Math.round(discount.amount * 100);
-    const shippingInCents = Math.round(shipping * 100);
-    const taxInCents = Math.round(tax * 100);
-    
-    const totalInCents = Math.max(0, subtotalInCents - discountInCents + shippingInCents + taxInCents);
-    return totalInCents / 100;
-  }, [subtotal, discount, shipping, tax]);
-
-  // Calculate total number of items in the cart
-  const getTotalItems = () => {
-    return items.reduce((total, item) => total + item.quantity, 0);
+    const info = DISCOUNT_CODES[upper];
+    if (!info) {
+      setDiscountError(`"${upper}" isn't a valid code.`);
+      return false;
+    }
+    if (subtotal < info.minPurchase) {
+      setDiscountError(`${upper} needs a subtotal of at least ${formatPrice(info.minPurchase)}.`);
+      return false;
+    }
+    setDiscountCode(upper);
+    setDiscountError("");
+    return true;
   };
+
+  const removeDiscountCode = () => {
+    setDiscountCode(null);
+    setDiscountError("");
+  };
+
+  const getTotalItems = () => items.reduce((sum, i) => sum + i.quantity, 0);
 
   const value = {
     items,
     addToCart,
     updateQuantity,
     removeFromCart,
-    removeItem: removeFromCart, // Alias for removeFromCart
+    removeItem: removeFromCart,
     clearCart,
     getTotalItems,
     subtotal,
+    discount,
     shipping,
     tax,
     total,
-    discount,
     discountCode,
-    setDiscountCode,
+    discountType: discountInfo?.type || null,
+    discountQualifies,
+    discountMinimum: discountInfo?.minPurchase || 0,
     applyDiscountCode,
     removeDiscountCode,
     discountError,

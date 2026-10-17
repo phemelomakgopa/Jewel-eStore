@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import catalogue from '../data/products';
 
 const AdminContext = createContext();
 
@@ -9,8 +10,80 @@ export const useAdmin = () => {
   return ctx;
 };
 
+// Mock analytics data
+const mockAnalytics = {
+  totalRevenue: 125750.50,
+  totalOrders: 342,
+  totalProducts: catalogue.length,
+  totalUsers: 1247,
+  recentOrders: [
+    {
+      id: 'ORD-2024-001',
+      customerName: 'Sarah Johnson',
+      customerEmail: 'sarah@example.com',
+      total: 8999,
+      status: 'completed',
+      date: new Date('2024-08-14'),
+      items: [
+        { name: 'Diamond Ring', quantity: 1, price: 8999 }
+      ]
+    },
+    {
+      id: 'ORD-2024-002',
+      customerName: 'Michael Chen',
+      customerEmail: 'michael@example.com',
+      total: 4599,
+      status: 'processing',
+      date: new Date('2024-08-13'),
+      items: [
+        { name: 'Chain & Pearly Bracelet', quantity: 1, price: 4599 }
+      ]
+    },
+    {
+      id: 'ORD-2024-003',
+      customerName: 'Emma Davis',
+      customerEmail: 'emma@example.com',
+      total: 12598,
+      status: 'shipped',
+      date: new Date('2024-08-12'),
+      items: [
+        { name: 'Diamond Bracelet', quantity: 1, price: 9999 },
+        { name: 'Bronze Ring', quantity: 1, price: 1999 },
+        { name: 'Shipping', quantity: 1, price: 600 }
+      ]
+    }
+  ],
+  topProducts: [
+    { id: 6, name: 'Diamond Ring', sales: 45, revenue: 404955 },
+    { id: 4, name: 'Diamond Bracelet', sales: 32, revenue: 319968 },
+    { id: 2, name: 'Chain & Pearly Bracelet', sales: 28, revenue: 128772 },
+    { id: 5, name: 'Diamond Heart Earrings', sales: 24, revenue: 143976 },
+    { id: 7, name: 'Diamond Stone and Gold Ring', sales: 19, revenue: 143450 }
+  ],
+  salesData: [
+    { month: 'Jan', revenue: 8500, orders: 25 },
+    { month: 'Feb', revenue: 12300, orders: 35 },
+    { month: 'Mar', revenue: 15600, orders: 42 },
+    { month: 'Apr', revenue: 18900, orders: 48 },
+    { month: 'May', revenue: 22100, orders: 55 },
+    { month: 'Jun', revenue: 19800, orders: 51 },
+    { month: 'Jul', revenue: 25400, orders: 62 },
+    { month: 'Aug', revenue: 28750, orders: 68 }
+  ],
+  userGrowth: [
+    { month: 'Jan', users: 156 },
+    { month: 'Feb', users: 189 },
+    { month: 'Mar', users: 234 },
+    { month: 'Apr', users: 278 },
+    { month: 'May', users: 325 },
+    { month: 'Jun', users: 389 },
+    { month: 'Jul', users: 456 },
+    { month: 'Aug', users: 523 }
+  ]
+};
+
 export const AdminProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { currentUser: user, isAdmin: userIsAdmin } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [analytics, setAnalytics] = useState({
     totalRevenue: 0,
@@ -23,95 +96,17 @@ export const AdminProvider = ({ children }) => {
     userGrowth: []
   });
 
-  // Admin user emails (in a real app, this would be managed in the backend)
-  const adminEmails = [
-    'admin@jewel-estore.com',
-    'manager@jewel-estore.com',
-    'owner@jewel-estore.com'
-  ];
+  // Admin access comes from config/adminList.js or a Firestore role of "admin"
+  // (see AuthContext). Enforce the same rule in Firestore security rules.
+  const isAdmin = () => userIsAdmin;
 
-  const isAdmin = () => {
-    return user && adminEmails.includes(user.email);
-  };
-
-  // Mock analytics data
-  const mockAnalytics = {
-    totalRevenue: 125750.50,
-    totalOrders: 342,
-    totalProducts: 17,
-    totalUsers: 1247,
-    recentOrders: [
-      {
-        id: 'ORD-2024-001',
-        customerName: 'Sarah Johnson',
-        customerEmail: 'sarah@example.com',
-        total: 8999,
-        status: 'completed',
-        date: new Date('2024-08-14'),
-        items: [
-          { name: 'Diamond Ring', quantity: 1, price: 8999 }
-        ]
-      },
-      {
-        id: 'ORD-2024-002',
-        customerName: 'Michael Chen',
-        customerEmail: 'michael@example.com',
-        total: 4599,
-        status: 'processing',
-        date: new Date('2024-08-13'),
-        items: [
-          { name: 'Chain & Pearly Bracelet', quantity: 1, price: 4599 }
-        ]
-      },
-      {
-        id: 'ORD-2024-003',
-        customerName: 'Emma Davis',
-        customerEmail: 'emma@example.com',
-        total: 12598,
-        status: 'shipped',
-        date: new Date('2024-08-12'),
-        items: [
-          { name: 'Diamond Bracelet', quantity: 1, price: 9999 },
-          { name: 'Bronze Ring', quantity: 1, price: 1999 },
-          { name: 'Shipping', quantity: 1, price: 600 }
-        ]
-      }
-    ],
-    topProducts: [
-      { id: 6, name: 'Diamond Ring', sales: 45, revenue: 404955 },
-      { id: 4, name: 'Diamond Bracelet', sales: 32, revenue: 319968 },
-      { id: 2, name: 'Chain & Pearly Bracelet', sales: 28, revenue: 128772 },
-      { id: 5, name: 'Diamond Heart Earrings', sales: 24, revenue: 143976 },
-      { id: 7, name: 'Diamond Stone and Gold Ring', sales: 19, revenue: 143450 }
-    ],
-    salesData: [
-      { month: 'Jan', revenue: 8500, orders: 25 },
-      { month: 'Feb', revenue: 12300, orders: 35 },
-      { month: 'Mar', revenue: 15600, orders: 42 },
-      { month: 'Apr', revenue: 18900, orders: 48 },
-      { month: 'May', revenue: 22100, orders: 55 },
-      { month: 'Jun', revenue: 19800, orders: 51 },
-      { month: 'Jul', revenue: 25400, orders: 62 },
-      { month: 'Aug', revenue: 28750, orders: 68 }
-    ],
-    userGrowth: [
-      { month: 'Jan', users: 156 },
-      { month: 'Feb', users: 189 },
-      { month: 'Mar', users: 234 },
-      { month: 'Apr', users: 278 },
-      { month: 'May', users: 325 },
-      { month: 'Jun', users: 389 },
-      { month: 'Jul', users: 456 },
-      { month: 'Aug', users: 523 }
-    ]
-  };
 
   // Load analytics data
   useEffect(() => {
-    if (isAdmin()) {
+    if (userIsAdmin) {
       setAnalytics(mockAnalytics);
     }
-  }, [user]);
+  }, [user, userIsAdmin]);
 
   const updateOrderStatus = async (orderId, newStatus) => {
     if (!isAdmin()) {

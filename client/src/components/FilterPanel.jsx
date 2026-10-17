@@ -1,205 +1,99 @@
-import React, { useState } from 'react';
-import { useSearch } from '../contexts/SearchContext';
-import './FilterPanel.css';
+import React, { useEffect, useState } from "react";
+import { MATERIALS } from "../utils/catalog";
+import "./FilterPanel.css";
 
-const FilterPanel = ({ isOpen, onToggle, className = '' }) => {
-  const {
-    filters,
-    updateFilter,
-    updatePriceRange,
-    sortBy,
-    setSortBy,
-    clearFilters,
-    getFilteredProductCount,
-    getAvailableCategories,
-    getAvailableMaterials,
-    getPriceRange,
-  } = useSearch();
+// Sidebar on desktop, slide-over sheet on mobile. Filter state belongs to
+// the URL (see Shop); this panel only reads and writes it.
+const FilterPanel = ({ filters, setParam, clearAll, isOpen, onClose, resultCount }) => {
+  const [min, setMin] = useState(filters.min ?? "");
+  const [max, setMax] = useState(filters.max ?? "");
 
-  const [priceRange, setPriceRange] = useState(filters.priceRange);
-  const categories = getAvailableCategories();
-  const materials = getAvailableMaterials();
-  const { min: minPrice, max: maxPrice } = getPriceRange();
+  useEffect(() => setMin(filters.min ?? ""), [filters.min]);
+  useEffect(() => setMax(filters.max ?? ""), [filters.max]);
 
-  const handlePriceChange = (type, value) => {
-    const newRange = { ...priceRange, [type]: parseInt(value) };
-    setPriceRange(newRange);
-    updatePriceRange(newRange.min, newRange.max);
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen, onClose]);
+
+  const applyPrice = (e) => {
+    e.preventDefault();
+    let lo = min === "" ? null : Math.max(0, Number(min));
+    let hi = max === "" ? null : Math.max(0, Number(max));
+    if (lo != null && hi != null && lo > hi) [lo, hi] = [hi, lo];
+    setParam({ min: lo == null ? "" : String(lo), max: hi == null ? "" : String(hi) });
   };
-
-  const handleClearFilters = () => {
-    setPriceRange({ min: 0, max: 10000 });
-    clearFilters();
-  };
-
-  const sortOptions = [
-    { value: 'name', label: 'Name (A-Z)' },
-    { value: 'price-low', label: 'Price: Low to High' },
-    { value: 'price-high', label: 'Price: High to Low' },
-    { value: 'newest', label: 'Newest First' },
-  ];
 
   return (
     <>
-      {/* Mobile overlay */}
-      {isOpen && (
-        <div className="filter-overlay" onClick={onToggle}></div>
-      )}
-      
-      <div className={`filter-panel ${isOpen ? 'open' : ''} ${className}`}>
+      {isOpen && <div className="filter-overlay" onClick={onClose} aria-hidden="true" />}
+
+      <aside className={`filter-panel ${isOpen ? "open" : ""}`} aria-label="Filters">
         <div className="filter-header">
-          <h3>Filters</h3>
-          <button className="filter-close" onClick={onToggle}>
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+          <h2>Filters</h2>
+          <button type="button" className="filter-close" onClick={onClose} aria-label="Close filters">
+            ×
           </button>
         </div>
 
-        <div className="filter-content">
-          {/* Results Count */}
-          <div className="filter-results">
-            <span>{getFilteredProductCount()} products found</span>
+        <fieldset className="filter-section">
+          <legend className="filter-label">Material</legend>
+          <div className="chip-group">
+            {MATERIALS.map((m) => {
+              const active = filters.material === m;
+              return (
+                <button
+                  key={m}
+                  type="button"
+                  className={`chip ${active ? "active" : ""}`}
+                  aria-pressed={active}
+                  onClick={() => setParam("material", active ? "" : m)}
+                >
+                  {m}
+                </button>
+              );
+            })}
           </div>
+        </fieldset>
 
-          {/* Sort Options */}
-          <div className="filter-section">
-            <label className="filter-label">Sort By</label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="filter-select"
-            >
-              {sortOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Category Filter */}
-          <div className="filter-section">
-            <label className="filter-label">Category</label>
-            <div className="filter-options">
-              <label className="filter-option">
-                <input
-                  type="radio"
-                  name="category"
-                  value=""
-                  checked={filters.category === ''}
-                  onChange={(e) => updateFilter('category', e.target.value)}
-                />
-                <span>All Categories</span>
+        <form className="filter-section" onSubmit={applyPrice}>
+          <fieldset>
+            <legend className="filter-label">Price (R)</legend>
+            <div className="price-inputs">
+              <label>
+                <span className="visually-hidden">Minimum price in rand</span>
+                <input type="number" inputMode="numeric" min="0" placeholder="Min" value={min} onChange={(e) => setMin(e.target.value)} />
               </label>
-              {categories.map(category => (
-                <label key={category} className="filter-option">
-                  <input
-                    type="radio"
-                    name="category"
-                    value={category}
-                    checked={filters.category === category}
-                    onChange={(e) => updateFilter('category', e.target.value)}
-                  />
-                  <span>{category.charAt(0).toUpperCase() + category.slice(1)}</span>
-                </label>
-              ))}
+              <span aria-hidden="true">–</span>
+              <label>
+                <span className="visually-hidden">Maximum price in rand</span>
+                <input type="number" inputMode="numeric" min="0" placeholder="Max" value={max} onChange={(e) => setMax(e.target.value)} />
+              </label>
+              <button type="submit" className="price-apply">
+                Apply
+              </button>
             </div>
-          </div>
+          </fieldset>
+        </form>
 
-          {/* Price Range */}
-          <div className="filter-section">
-            <label className="filter-label">Price Range</label>
-            <div className="price-range">
-              <div className="price-inputs">
-                <div className="price-input-group">
-                  <label>Min</label>
-                  <input
-                    type="number"
-                    min={minPrice}
-                    max={maxPrice}
-                    value={priceRange.min}
-                    onChange={(e) => handlePriceChange('min', e.target.value)}
-                    className="price-input"
-                  />
-                </div>
-                <span className="price-separator">-</span>
-                <div className="price-input-group">
-                  <label>Max</label>
-                  <input
-                    type="number"
-                    min={minPrice}
-                    max={maxPrice}
-                    value={priceRange.max}
-                    onChange={(e) => handlePriceChange('max', e.target.value)}
-                    className="price-input"
-                  />
-                </div>
-              </div>
-              <div className="price-range-slider">
-                <input
-                  type="range"
-                  min={minPrice}
-                  max={maxPrice}
-                  value={priceRange.min}
-                  onChange={(e) => handlePriceChange('min', e.target.value)}
-                  className="range-slider range-min"
-                />
-                <input
-                  type="range"
-                  min={minPrice}
-                  max={maxPrice}
-                  value={priceRange.max}
-                  onChange={(e) => handlePriceChange('max', e.target.value)}
-                  className="range-slider range-max"
-                />
-              </div>
-              <div className="price-display">
-                R{priceRange.min} - R{priceRange.max}
-              </div>
-            </div>
-          </div>
-
-          {/* Material Filter */}
-          <div className="filter-section">
-            <label className="filter-label">Material</label>
-            <select
-              value={filters.material}
-              onChange={(e) => updateFilter('material', e.target.value)}
-              className="filter-select"
-            >
-              <option value="">All Materials</option>
-              {materials.map(material => (
-                <option key={material} value={material}>
-                  {material}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Stock Filter */}
-          <div className="filter-section">
-            <label className="filter-option checkbox-option">
-              <input
-                type="checkbox"
-                checked={filters.inStock}
-                onChange={(e) => updateFilter('inStock', e.target.checked)}
-              />
-              <span>In Stock Only</span>
-            </label>
-          </div>
-
-          {/* Clear Filters */}
-          <div className="filter-actions">
-            <button
-              onClick={handleClearFilters}
-              className="clear-filters-btn"
-            >
-              Clear All Filters
-            </button>
-          </div>
+        <div className="filter-section">
+          <label className="checkbox-option">
+            <input type="checkbox" checked={filters.inStock} onChange={(e) => setParam("inStock", e.target.checked)} />
+            <span>In stock only</span>
+          </label>
         </div>
-      </div>
+
+        <div className="filter-actions">
+          <button type="button" className="btn btn-link" onClick={clearAll}>
+            Clear all
+          </button>
+          <button type="button" className="btn btn-primary show-results" onClick={onClose}>
+            Show {resultCount} {resultCount === 1 ? "piece" : "pieces"}
+          </button>
+        </div>
+      </aside>
     </>
   );
 };

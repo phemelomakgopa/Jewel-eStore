@@ -1,235 +1,59 @@
-/* Section wrapper */
 .productsSection {
-  background-color: #b6ab99;
-  padding: 3rem 1rem;
-  text-align: center;
-  position: relative; /* normal stacking */
-  z-index: 1;
-  overflow: visible; /* ensure hover lift isn't clipped */
+  background-color: var(--taupe);
+  padding: 3rem 1rem 4rem;
 }
 
-/* Divider line with text in middle */
+/* Divider line with the heading in the middle */
 .sectionDivider {
   display: flex;
   align-items: center;
-  text-align: center;
-  margin-bottom: 2rem;
+  max-width: var(--page-max);
+  margin: 0 auto 2rem;
 }
 
 .sectionDivider::before,
 .sectionDivider::after {
   content: "";
   flex: 1;
-  border-bottom: 1px solid grey;
-}
-
-.sectionDivider:not(:empty)::before {
-  margin-right: 1rem;
-}
-
-.sectionDivider:not(:empty)::after {
-  margin-left: 1rem;
+  border-bottom: 1px solid var(--ink-soft);
 }
 
 .productsHeading {
-  font-family: "Livvic", sans-serif;
-  font-size: 24px;
-  font-weight: normal;
-  color: #000;
+  margin: 0 1.25rem;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--ink);
 }
 
-/* Grid */
 .productsGrid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1.5rem;
-  max-width: 1200px;
+  gap: 2rem 1.25rem;
+  max-width: var(--page-max);
   margin: 0 auto;
-  overflow: visible; /* allow cards to lift beyond row height */
 }
 
-@media (max-width: 1200px) {
+.more {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+}
+
+@media (max-width: 1100px) {
   .productsGrid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
-@media (max-width: 992px) {
+
+@media (max-width: 860px) {
   .productsGrid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
-@media (max-width: 768px) {
+
+@media (max-width: 640px) {
   .productsGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 480px) {
-  .productsGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Card */
-.productCard {
-  background: #b6ab99;
-  border-radius: 10px;
-  padding: 1rem;
-  text-align: left;
-  cursor: pointer;
-  text-decoration: none;
-  /* pop-up animation */
-  will-change: transform, box-shadow;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-
-  /* create stacking context so we can raise above neighbors */
-  position: relative;
-  z-index: 0;
-}
-
-.productCard:hover {
-  transform: translateY(-10px) scale(1.04);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.18);
-  z-index: 5; /* above neighbors within the grid */
-}
-
-/* Image */
-.productImage {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
-  border: none;
-}
-
-/* Name */
-.productName {
-  margin-top: 0.8rem;
-  font-family: "Mulish", sans-serif;
-  font-size: 18px;
-  font-weight: 550;
-  color: #000;
-}
-
-/* Price */
-.productPrice {
-  margin-top: 0.3rem;
-  font-size: 16px;
-  color: #333;
-}
-
-/* Quantity Controls */
-.quantityControls {
-  display: flex;
-  align-items: center;
-  margin: 0.8rem 0;
-  gap: 0.5rem;
-}
-
-.quantityBtn {
-  width: 32px;
-  height: 32px;
-  border: 1px solid #5c4033;
-  background: white;
-  color: #5c4033;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.quantityBtn:hover {
-  background-color: #f0f0f0;
-}
-
-.quantityInput {
-  width: 50px;
-  height: 32px;
-  text-align: center;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-  /* Vendor prefixes first, then standard */
-  -webkit-appearance: textfield;
-  appearance: textfield;
-}
-
-.quantityInput::-webkit-outer-spin-button,
-.quantityInput::-webkit-inner-spin-button {
-  /* Hide number input spinners in WebKit browsers */
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.quantityInput[type="number"] {
-  /* Ensure consistent styling across browsers */
-  -webkit-appearance: textfield;
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
-/* Add to cart */
-.addToCartBtn {
-  width: 100%;
-  margin-top: 0.5rem;
-  padding: 0.6rem 1rem;
-  background-color: #5c4033;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease,
-    background-color 0.2s ease;
-}
-
-.addToCartBtn:hover {
-  background-color: #4b332a;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 16px rgba(0, 0, 0, 0.18);
-}
-
-/* No products message */
-.noProducts {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 2rem;
-  font-size: 1.2rem;
-  color: #666;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .productCard {
-    padding: 0.8rem;
-  }
-
-  .productName {
-    font-size: 16px;
-  }
-
-  .productPrice {
-    font-size: 15px;
-  }
-
-  .addToCartBtn {
-    padding: 0.5rem 0.8rem;
-    font-size: 13px;
-  }
-
-  .quantityBtn {
-    width: 28px;
-    height: 28px;
-    font-size: 14px;
-  }
-
-  .quantityInput {
-    width: 40px;
-    height: 28px;
-    font-size: 13px;
+    gap: 1.5rem 0.75rem;
   }
 }

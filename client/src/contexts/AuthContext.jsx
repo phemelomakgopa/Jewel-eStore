@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { getAuth, onAuthStateChanged, signOut as firebaseSignOut } from "firebase/auth";
+import { onAuthStateChanged, signOut as firebaseSignOut, updateProfile } from "firebase/auth";
 import {
-  getFirestore,
   doc,
   getDoc,
   setDoc,
@@ -10,11 +9,12 @@ import {
   getDocs,
   query,
   where,
-  orderBy,
   arrayUnion,
   serverTimestamp,
 } from "firebase/firestore";
-import { app } from "../config/firebaseConfig";
+import { auth, db } from "../config/firebaseConfig";
+import { adminEmail } from "../config/adminList";
+import Loader from "../components/Loader";
 
 const AuthContext = createContext();
 
@@ -24,190 +24,180 @@ export const useAuth = () => {
   return ctx;
 };
 
+export const EMPTY_ADDRESS = {
+  fullName: "",
+  email: "",
+  phone: "",
+  street: "",
+  city: "",
+  province: "",
+  postalCode: "",
+  country: "South Africa",
+};
+
+// Older records used `streetAddress` / `state`; read them so saved addresses
+// aren't lost.
+export const normalizeAddress = (address = {}) => ({
+  fullName: (address.fullName || address.name || "").trim(),
+  email: (address.email || "").trim(),
+  phone: (address.phone || "").trim(),
+  street: (address.street || address.streetAddress || "").trim(),
+  city: (address.city || "").trim(),
+  province: (address.province || address.state || "").trim(),
+  postalCode: (address.postalCode || "").trim(),
+  country: (address.country || "South Africa").trim(),
+});
+
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setCurrentUser(user);
+      if (!user) {
+        setUserProfile(null);
+        setLoading(false);
+        return;
+      }
       try {
-        if (user) {
-          setCurrentUser(user);
-          const userRef = doc(db, "users", user.uid);
-          const userDoc = await getDoc(userRef);
+        const userRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userRef);
 
-          if (userDoc.exists()) {
-            setUserProfile(userDoc.data());
-            await updateDoc(userRef, { lastLogin: serverTimestamp() });
-          } else {
-            const newUser = {
-              uid: user.uid,
-              email: user.email || "",
-              name: user.displayName || "",
-              photo: user.photoURL || "",
-              provider: user.providerData?.[0]?.providerId || "email",
-              role: "user",
-              createdAt: serverTimestamp(),
-              lastLogin: serverTimestamp(),
-              shippingAddress: {
-                fullName: "",
-                phone: "",
-                street: "",
-                city: "",
-                state: "",
-                postalCode: "",
-                country: "",
-              },
-              orders: [],
-            };
-            await setDoc(userRef, newUser);
-            setUserProfile(newUser);
-          }
+        if (userDoc.exists()) {
+          setUserProfile(userDoc.data());
+          updateDoc(userRef, { lastLogin: serverTimestamp() }).catch(() => {});
         } else {
-          setCurrentUser(null);
-          setUserProfile(null);
+          // The only place a user document is created, so signing in again
+          // can never wipe an existing address or order list.
+          const newUser = {
+            uid: user.uid,
+            email: user.email || "",
+            // Omitted when empty so a name saved by sign-up isn't overwritten.
+            ...(user.displayName ? { name: user.displayName } : {}),
+            photo: user.photoURL || "",
+            provider: user.providerData?.[0]?.providerId || "password",
+            role: "user",
+            createdAt: serverTimestamp(),
+            lastLogin: serverTimestamp(),
+            shippingAddress: { ...EMPTY_ADDRESS, email: user.email || "" },
+            orders: [],
+          };
+          await setDoc(userRef, newUser, { merge: true });
+          setUserProfile((prev) => ({ ...newUser, ...(prev?.name ? { name: prev.name } : {}) }));
         }
       } catch (e) {
-        console.error("Auth state init error:", e);
+        console.error("Could not load user profile:", e);
       } finally {
         setLoading(false);
       }
     });
 
     return unsubscribe;
-  }, [auth, db]);
+  }, []);
 
   const logout = async () => {
-    try {
-      await firebaseSignOut(auth);
-      setCurrentUser(null);
-      setUserProfile(null);
-    } catch (error) {
-      console.error("Error signing out:", error);
-      throw error;
-    }
+    await firebaseSignOut(auth);
   };
+
+  const updateDisplayName = useCallback(async (name) => {
+    if (!auth.currentUser) return;
+    await updateProfile(auth.currentUser, { displayName: name });
+    await setDoc(doc(db, "users", auth.currentUser.uid), { name }, { merge: true });
+    setUserProfile((prev) => ({ ...(prev || {}), name }));
+  }, []);
 
   const updateShippingAddress = useCallback(
     async (addressData) => {
-      if (!currentUser) throw new Error("Not signed in");
-      const userRef = doc(db, "users", currentUser.uid);
-      const payload = {
-        shippingAddress: {
-          fullName: addressData.fullName?.trim() || "",
-          phone: addressData.phone?.trim() || "",
-          street: addressData.street?.trim() || "",
-          city: addressData.city?.trim() || "",
-          state: addressData.state?.trim() || "",
-          postalCode: addressData.postalCode?.trim() || "",
-          country: addressData.country?.trim() || "",
-        },
-        updatedAt: serverTimestamp(),
-      };
-      await updateDoc(userRef, payload);
-      const updated = await getDoc(userRef);
-      setUserProfile(updated.data());
-      return updated.data().shippingAddress;
+      if (!currentUser) throw new Error("Sign in to save an address.");
+      const shippingAddress = normalizeAddress(addressData);
+      await setDoc(
+        doc(db, "users", currentUser.uid),
+        { shippingAddress, updatedAt: serverTimestamp() },
+        { merge: true }
+      );
+      setUserProfile((prev) => ({ ...(prev || {}), shippingAddress }));
+      return shippingAddress;
     },
-    [currentUser, db]
+    [currentUser]
   );
 
   const getShippingAddress = useCallback(() => {
-    return userProfile?.shippingAddress || null;
-  }, [userProfile]);
+    const saved = userProfile?.shippingAddress;
+    return saved ? normalizeAddress({ email: currentUser?.email, ...saved }) : null;
+  }, [userProfile, currentUser]);
 
+  // Amounts are integer cents; `unit` lets order history tell new orders
+  // apart from older ones that stored rands.
   const createOrder = useCallback(
-    async (orderData) => {
-      if (!currentUser) throw new Error("Not signed in");
-      if (!orderData?.items?.length) throw new Error("Cart is empty");
-      if (!orderData?.shippingAddress?.fullName) throw new Error("Shipping address missing");
+    async ({ items, shippingAddress, amounts, payment, status = "placed" }) => {
+      if (!currentUser) throw new Error("Sign in to place an order.");
+      if (!items?.length) throw new Error("Your cart is empty.");
+      if (!shippingAddress?.fullName) throw new Error("Add a shipping address first.");
 
-      const userRef = doc(db, "users", currentUser.uid);
-      const ordersCol = collection(db, "orders");
-
+      const orderRef = doc(collection(db, "orders"));
       const order = {
+        id: orderRef.id,
         userId: currentUser.uid,
-        items: orderData.items.map((i) => ({
+        unit: "cents",
+        currency: "ZAR",
+        items: items.map((i) => ({
           id: i.id,
           name: i.name,
           price: i.price,
           quantity: i.quantity,
           size: i.size || null,
-          image: i.image || "",
         })),
-        shippingAddress: orderData.shippingAddress,
+        shippingAddress: normalizeAddress(shippingAddress),
         amounts: {
-          subtotal: Number(orderData.amounts?.subtotal || 0),
-          shipping: Number(orderData.amounts?.shipping || 0),
-          tax: Number(orderData.amounts?.tax || 0),
-          total: Number(orderData.amounts?.total || 0),
+          subtotal: amounts.subtotal,
+          discount: amounts.discount || 0,
+          shipping: amounts.shipping,
+          tax: amounts.tax,
+          total: amounts.total,
         },
-        status: "placed",
+        discountCode: amounts.discountCode || null,
+        status,
+        payment,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
-        payment: {
-          method: "card",
-          last4: orderData?.payment?.last4 || "",
-          brand: orderData?.payment?.brand || "unknown",
-        },
       };
 
-      const newOrderRef = doc(ordersCol);
-      const orderId = newOrderRef.id;
-      await setDoc(newOrderRef, { id: orderId, ...order });
-      await updateDoc(userRef, { 
-        orders: arrayUnion(orderId), 
-        updatedAt: serverTimestamp() 
-      });
+      await setDoc(orderRef, order);
+      updateDoc(doc(db, "users", currentUser.uid), {
+        orders: arrayUnion(orderRef.id),
+        updatedAt: serverTimestamp(),
+      }).catch((e) => console.warn("Could not link order to user profile:", e));
 
-      const updated = await getDoc(userRef);
-      setUserProfile(updated.data());
-
-      return { id: orderId, ...order };
+      return { ...order, createdAt: new Date() };
     },
-    [currentUser, db]
+    [currentUser]
   );
 
+  // Sorted client-side so Firestore doesn't need a composite index.
   const getUserOrders = useCallback(async () => {
     if (!currentUser) return [];
-    const ordersCol = collection(db, "orders");
-    const q = query(
-      ordersCol, 
-      where("userId", "==", currentUser.uid), 
-      orderBy("createdAt", "desc")
-    );
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data());
-  }, [currentUser, db]);
+    const snap = await getDocs(query(collection(db, "orders"), where("userId", "==", currentUser.uid)));
+    const time = (o) => (o.createdAt?.toMillis ? o.createdAt.toMillis() : 0);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => time(b) - time(a));
+  }, [currentUser]);
 
-  const getOrderById = useCallback(
-    async (orderId) => {
-      if (!currentUser) throw new Error("Not signed in");
-      const ref = doc(db, "orders", orderId);
-      const od = await getDoc(ref);
-      if (!od.exists()) throw new Error("Order not found");
-      const data = od.data();
-      if (data.userId !== currentUser.uid) throw new Error("Unauthorized");
-      return data;
-    },
-    [currentUser, db]
-  );
+  const isAdmin =
+    !!currentUser && (adminEmail.includes(currentUser.email) || userProfile?.role === "admin");
 
   const value = {
     currentUser,
     userProfile,
     loading,
+    isAdmin,
     logout,
+    updateDisplayName,
     updateShippingAddress,
     getShippingAddress,
     createOrder,
     getUserOrders,
-    getOrderById,
   };
 
-  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{loading ? <Loader /> : children}</AuthContext.Provider>;
 };

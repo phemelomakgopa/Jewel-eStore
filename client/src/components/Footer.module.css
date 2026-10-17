@@ -1,14 +1,79 @@
-/* client/src/components/Footer.module.css */
 .footer {
-  text-align: center;
-  padding: 2rem;
-  background-color: #333;
-  color: white;
-  margin-top: 3rem;
-  font-size: 0.9rem;
+  background: var(--ink);
+  color: var(--linen);
+  padding: 3rem 1rem 1.5rem;
+}
+
+.inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.6fr repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.logo {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--linen);
+  text-decoration: none;
+}
+
+.brand p {
+  max-width: 28ch;
+  color: rgba(242, 236, 220, 0.75);
+}
+
+.heading {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  color: rgba(242, 236, 220, 0.75);
+  font-size: 0.92rem;
+}
+
+.footer li + li {
+  margin-top: 0.45rem;
+}
+
+.footer ul a {
+  color: rgba(242, 236, 220, 0.85);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.footer ul a:hover {
+  color: var(--gold);
+  text-decoration: underline;
+}
+
+.footer a:focus-visible {
+  outline-color: var(--gold);
 }
 
 .footerText {
-  margin: 0;
-  padding: 0;
+  max-width: var(--page-max);
+  margin: 2.5rem auto 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(242, 236, 220, 0.15);
+  font-size: 0.82rem;
+  color: rgba(242, 236, 220, 0.6);
+}
+
+@media (max-width: 760px) {
+  .inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .brand,
+  .inner > div:last-child {
+    grid-column: 1 / -1;
+  }
 }

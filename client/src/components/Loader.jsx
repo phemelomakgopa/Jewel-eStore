@@ -1,20 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import styles from './Loader.module.css';
-import logo from '../assets/logo.png'; 
+import React from "react";
+import styles from "./Loader.module.css";
+import logo from "../assets/logo.png";
 
-const Loader = () => {
-  const [fadeOut, setFadeOut] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setFadeOut(true), 1500); // Show loader for 1.5s
-    return () => clearTimeout(timer);
-  }, []);
-
-  return (
-    <div className={`${styles.loaderWrapper} ${fadeOut ? styles.fadeOut : ''}`}>
-      <img src={logo} alt="Jewel Store Logo" className={styles.loaderLogo} />
-    </div>
-  );
-};
+// Shown only while Firebase restores the signed-in session.
+const Loader = () => (
+  <div className={styles.loaderWrapper} role="status" aria-label="Loading Jewel Store">
+    <img src={logo} alt="" className={styles.loaderLogo} />
+  </div>
+);
 
 export default Loader;

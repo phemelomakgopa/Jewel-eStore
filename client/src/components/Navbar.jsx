@@ -1,83 +1,115 @@
-import React from "react";
-import styles from "./Navbar.module.css"; 
+import React, { useEffect, useState } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { FaShoppingBag, FaHeart, FaBars, FaTimes } from "react-icons/fa";
+import styles from "./Navbar.module.css";
 import { useAuth } from "../contexts/AuthContext";
 import { useWishlist } from "../contexts/WishlistContext";
 import { useCart } from "../contexts/CartContext";
 import UserProfile from "./UserProfile";
 import SearchBar from "./SearchBar";
 
-import { FaShoppingCart, FaUserCircle, FaHeart } from "react-icons/fa";
+const LINKS = [
+  { to: "/", label: "Home", end: true },
+  { to: "/products", label: "Shop" },
+  { to: "/about", label: "About" },
+  { to: "/contact", label: "Contact" },
+];
+
+const linkClass = ({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ""}`;
 
 const Navbar = () => {
   const { currentUser } = useAuth();
   const { getWishlistCount } = useWishlist();
   const { getTotalItems } = useCart();
+  const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const cartCount = getTotalItems();
+  const wishlistCount = currentUser ? getWishlistCount() : 0;
+
+  // Close the mobile menu whenever the route changes.
+  useEffect(() => setMenuOpen(false), [location.pathname, location.search]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e) => e.key === "Escape" && setMenuOpen(false);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
 
   return (
-    <nav className={styles.navbar}>
+    <header className={styles.navbar}>
       <div className={styles.navbarContainer}>
-        {/* Logo/Brand Name */}
-        <a href="/" className={styles.logo}>
+        <button
+          type="button"
+          className={styles.menuToggle}
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+        >
+          {menuOpen ? <FaTimes /> : <FaBars />}
+        </button>
+
+        <Link to="/" className={styles.logo}>
           Jewel Store.
-        </a>
+        </Link>
 
-        {/* Search Bar */}
         <div className={styles.searchContainer}>
-          <SearchBar className={styles.searchBar} />
+          <SearchBar />
         </div>
 
-        {/* Navigation Links (Desktop) */}
-        <div className={styles.navLinksDesktop}>
-          <a href="/" className={styles.navLink}>
-            Home
-          </a>
-          <a href="/about" className={styles.navLink}>
-            About
-          </a>
-          <a href="/products" className={styles.navLink}>
-            Products
-          </a>
-          <a href="/contact" className={styles.navLink}>
-            Contact
-          </a>
-        </div>
+        <nav className={styles.navLinksDesktop} aria-label="Main">
+          {LINKS.map((l) => (
+            <NavLink key={l.to} to={l.to} end={l.end} className={linkClass}>
+              {l.label}
+            </NavLink>
+          ))}
+        </nav>
 
-        {/* Action Buttons (Desktop) */}
-        <div className={styles.actionButtonsDesktop}>
-          {!currentUser ? (
-            <a href="/signin" className={styles.signInLink}>
-              SIGN IN
-            </a>
-          ) : null}
-
-          <a href="/wishlist" className={styles.wishlistButton}>
-            <FaHeart className={styles.wishlistIcon} />
-            {currentUser && getWishlistCount() > 0 && (
-              <span className={styles.wishlistBadge}>{getWishlistCount()}</span>
-            )}
-          </a>
-
-          <a href="/cart" className={styles.cartButton}>
-            <FaShoppingCart className={styles.cartIcon} />
-            {getTotalItems() > 0 && (
-              <span className={styles.cartBadge}>{getTotalItems()}</span>
-            )}
-          </a>
-          
-          {currentUser && (
-            <a href="/orders" className={styles.navLink}>
-              My Orders
-            </a>
+        <div className={styles.actions}>
+          {!currentUser && (
+            <Link
+              to="/signin"
+              state={{ from: location.pathname + location.search }}
+              className={styles.signInLink}
+            >
+              Sign in
+            </Link>
           )}
 
-          {currentUser ? (
-            <UserProfile />
-          ) : (
-            <FaUserCircle className={styles.userIcon} />
-          )}
+          <Link to="/wishlist" className={styles.iconButton} aria-label={`Wishlist, ${wishlistCount} items`}>
+            <FaHeart />
+            {wishlistCount > 0 && <span className={styles.badge}>{wishlistCount}</span>}
+          </Link>
+
+          <Link to="/cart" className={styles.iconButton} aria-label={`Cart, ${cartCount} items`}>
+            <FaShoppingBag />
+            {cartCount > 0 && <span className={`${styles.badge} ${styles.cartBadge}`}>{cartCount}</span>}
+          </Link>
+
+          {currentUser && <UserProfile />}
         </div>
       </div>
-    </nav>
+
+      {menuOpen && (
+        <div id="mobile-menu" className={styles.mobileMenu}>
+          <SearchBar />
+          <nav aria-label="Main" className={styles.mobileLinks}>
+            {LINKS.map((l) => (
+              <NavLink key={l.to} to={l.to} end={l.end} className={linkClass}>
+                {l.label}
+              </NavLink>
+            ))}
+            {currentUser && (
+              <NavLink to="/orders" className={linkClass}>
+                Your orders
+              </NavLink>
+            )}
+          </nav>
+        </div>
+      )}
+    </header>
   );
 };
 

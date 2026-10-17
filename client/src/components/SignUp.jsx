@@ -1,173 +1,121 @@
 import React, { useState } from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../config/firebaseConfig";
+import { useAuth } from "../contexts/AuthContext";
+import { authErrorMessage } from "../utils/authErrors";
+import { GoogleButton } from "./SignIn";
 import "./SignIn.css";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  updateProfile,
-} from "firebase/auth";
-import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { useNavigate, Link } from "react-router-dom";
-import { app } from "../config/firebaseConfig";
 
 export default function SignUp() {
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const provider = new GoogleAuthProvider();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { currentUser, updateDisplayName } = useAuth();
+  const from = location.state?.from || "/";
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [creating, setCreating] = useState(false);
 
-  // Email Sign-Up
+  // While creating, the auth state flips to signed-in before the name is
+  // saved; don't redirect away mid-way.
+  if (currentUser && !creating) return <Navigate to={from} replace />;
+
+  const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+
   const handleSignUp = async (e) => {
     e.preventDefault();
+    if (form.password.length < 6) return setError("Use a password with at least 6 characters.");
+    if (form.password !== form.confirm) return setError("The passwords don't match.");
 
-    if (password !== confirmPassword) {
-      setMessage("Passwords do not match.");
-      return;
-    }
-
+    setBusy(true);
+    setCreating(true);
+    setError("");
     try {
-      const { user } = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      // Set display name
-      await updateProfile(user, { displayName: name });
-
-      // Save user to Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        name: name,
-        email: user.email,
-        provider: "email",
-        role: "user",
-        photo: "",
-        createdAt: serverTimestamp(),
-        lastLogin: serverTimestamp(),
-        shippingAddress: {
-          fullName: "",
-          phone: "",
-          street: "",
-          city: "",
-          state: "",
-          postalCode: "",
-          country: "",
-        },
-        orders: [],
-      });
-
-      navigate("/");
-    } catch (error) {
-      setMessage("Failed to create account. Try again.");
+      // AuthContext creates the user's profile document; we only add the name.
+      await createUserWithEmailAndPassword(auth, form.email.trim(), form.password);
+      await updateDisplayName(form.name.trim());
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError(authErrorMessage(err));
+      setBusy(false);
+      setCreating(false);
     }
   };
 
-  // Google Sign-Up
-  const handleGoogleSignUp = async () => {
+  const handleGoogle = async () => {
+    setBusy(true);
+    setError("");
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      // Save user to Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        name: user.displayName || "",
-        email: user.email,
-        provider: "google",
-        role: "user",
-        photo: user.photoURL || "",
-        createdAt: serverTimestamp(),
-        lastLogin: serverTimestamp(),
-        shippingAddress: {
-          fullName: "",
-          phone: "",
-          street: "",
-          city: "",
-          state: "",
-          postalCode: "",
-          country: "",
-        },
-        orders: [],
-      });
-
-      navigate("/");
-    } catch (error) {
-      setMessage("Google Sign-Up failed. Please try again.");
+      await signInWithPopup(auth, googleProvider);
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError(authErrorMessage(err));
+      setBusy(false);
     }
   };
 
   return (
-    <div className="signup-page">
-      <div className="signup-container">
-        <form className="signup-form" onSubmit={handleSignUp}>
-          <h2>Create Account</h2>
+    <div className="auth-page">
+      <form className="auth-card" onSubmit={handleSignUp}>
+        <h1>Create an account</h1>
+        <p className="auth-lead">Save pieces to your wishlist and track your orders.</p>
 
-          <input
-            type="text"
-            required
-            placeholder="Full Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
+        {error && (
+          <p className="auth-error" role="alert">
+            {error}
+          </p>
+        )}
 
-          <input
-            type="email"
-            required
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+        <label htmlFor="signup-name">Full name</label>
+        <input id="signup-name" autoComplete="name" required value={form.name} onChange={update("name")} />
 
-          <input
-            type="password"
-            required
-            placeholder="Create a password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+        <label htmlFor="signup-email">Email</label>
+        <input id="signup-email" type="email" autoComplete="email" required value={form.email} onChange={update("email")} />
 
-          <input
-            type="password"
-            required
-            placeholder="Repeat your password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
+        <label htmlFor="signup-password">Password</label>
+        <input
+          id="signup-password"
+          type="password"
+          autoComplete="new-password"
+          required
+          minLength={6}
+          aria-describedby="password-hint"
+          value={form.password}
+          onChange={update("password")}
+        />
+        <span id="password-hint" className="auth-hint">
+          At least 6 characters.
+        </span>
 
-          {message && <p className="feedback">{message}</p>}
+        <label htmlFor="signup-confirm">Confirm password</label>
+        <input
+          id="signup-confirm"
+          type="password"
+          autoComplete="new-password"
+          required
+          value={form.confirm}
+          onChange={update("confirm")}
+        />
 
-          <button type="submit" className="create-account-btn">
-            Sign Up
-          </button>
+        <button type="submit" className="auth-submit" disabled={busy}>
+          {busy ? "Creating account…" : "Create account"}
+        </button>
 
-          <div className="divider">or</div>
+        <div className="divider">or</div>
 
-          <button
-            type="button"
-            className="google-btn"
-            onClick={handleGoogleSignUp}
-          >
-            <img
-              src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
-              alt="Google logo"
-              style={{ width: 20, marginRight: 8 }}
-            />
-            Sign Up with Google
-          </button>
+        <GoogleButton onClick={handleGoogle} disabled={busy}>
+          Sign up with Google
+        </GoogleButton>
 
-          <div className="signup-bottom">
-            Already have an account? <Link to="/signin">Sign In</Link>
-          </div>
-        </form>
-      </div>
+        <p className="auth-switch">
+          Already have an account?{" "}
+          <Link to="/signin" state={{ from }}>
+            Sign in
+          </Link>
+        </p>
+      </form>
     </div>
   );
 }

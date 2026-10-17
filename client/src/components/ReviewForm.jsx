@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useReviews } from '../contexts/ReviewsContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 import StarRating from './StarRating';
 import './ReviewForm.css';
 
 const ReviewForm = ({ productId, existingReview = null, onSuccess, onCancel }) => {
   const { addReview, updateReview, isLoading } = useReviews();
-  const { user } = useAuth();
+  const { currentUser: user } = useAuth();
+  const { notify } = useToast();
   const [formData, setFormData] = useState({
     rating: existingReview?.rating || 0,
     title: existingReview?.title || '',
@@ -48,7 +50,6 @@ const ReviewForm = ({ productId, existingReview = null, onSuccess, onCancel }) =
     e.preventDefault();
     
     if (!user) {
-      alert('Please sign in to leave a review');
       return;
     }
 
@@ -78,12 +79,13 @@ const ReviewForm = ({ productId, existingReview = null, onSuccess, onCancel }) =
       setFormData({ rating: 0, title: '', comment: '' });
       setErrors({});
       
+      notify(isEditing ? 'Review updated.' : 'Thanks — your review is posted.');
       if (onSuccess) {
         onSuccess();
       }
     } catch (error) {
       console.error('Error submitting review:', error);
-      alert('Failed to submit review. Please try again.');
+      notify("Couldn't save your review. Try again.", { tone: 'error' });
     } finally {
       setIsSubmitting(false);
     }

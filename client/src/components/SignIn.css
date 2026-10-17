@@ -1,123 +1,160 @@
-/* Page background */
-.signup-page {
-  background-color: #b7a892; /* beige background */
-  min-height: 100vh;
-  font-family: "Arial", sans-serif;
-}
-
-/* Form container */
-.signup-container {
+/* Shared by sign in, sign up and password reset */
+.auth-page {
+  min-height: calc(100vh - 140px);
   display: flex;
   justify-content: center;
-  padding: 50px;
+  align-items: flex-start;
+  padding: 3rem 1rem;
+  background-color: var(--taupe);
 }
 
-.signup-form {
-  background-color: #5e4a3a; /* brown form background */
-  padding: 40px;
-  border-radius: 2px;
-  width: 350px;
+.auth-card {
+  width: 100%;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
+  padding: 2.25rem 2rem;
+  background-color: #5e4a3a;
+  color: var(--linen);
+  border-radius: 4px;
 }
 
-.signup-form label {
-  color: black;
-  margin-bottom: 5px;
+.auth-card h1 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  color: #fff;
+}
+
+.auth-lead {
+  margin: 0 0 1.5rem;
+  color: rgba(242, 236, 220, 0.85);
+}
+
+.auth-card label {
+  margin-bottom: 0.35rem;
   font-size: 0.9rem;
+  font-weight: 700;
 }
 
-.signup-form input {
-  margin-bottom: 20px;
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  background-color: #d9d9d9; /* light grey fields */
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
 }
 
-/* Create Account Button */
-.create-account-btn {
-  background-color: black;
-  color: white;
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 15px;
-  font-size: 1rem;
+.auth-card a {
+  color: #fff;
 }
 
-.create-account-btn:hover {
-  opacity: 0.9;
-  background-color: #3a3535;
-  transform: scale(1.05);
-  transition: all 0.3s;
+.label-row a {
+  font-size: 0.85rem;
 }
 
-/* Divider */
-.divider {
-  text-align: center;
-  color: white;
+.auth-card input {
+  min-height: 44px;
+  margin-bottom: 1.1rem;
+  padding: 0.6rem 0.75rem;
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  background-color: var(--linen);
+  color: var(--ink);
+}
+
+.auth-card input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.auth-hint {
+  margin: -0.8rem 0 1.1rem;
   font-size: 0.8rem;
-  margin: 10px 0;
+  color: rgba(242, 236, 220, 0.75);
 }
 
-/* Google Button */
-.google-btn {
-  background-color: black;
-  color: white;
-  padding: 12px;
+.auth-error,
+.auth-success {
+  margin: 0 0 1.25rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+}
+
+.auth-error {
+  background: #f6e3de;
+  color: var(--danger);
+}
+
+.auth-success {
+  background: #e7efe6;
+  color: var(--success);
+}
+
+.auth-submit {
+  min-height: 48px;
+  margin-top: 0.25rem;
+  background-color: var(--ink);
+  color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 700;
   cursor: pointer;
-  font-size: 0.95rem;
+  transition: background-color 0.2s ease;
+}
+
+.auth-submit:hover:not(:disabled) {
+  background-color: #000;
+}
+
+.auth-submit:disabled,
+.google-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+  font-size: 0.85rem;
+  color: rgba(242, 236, 220, 0.75);
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid rgba(242, 236, 220, 0.3);
+}
+
+.google-btn {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.6rem;
+  min-height: 48px;
+  background: #fff;
+  color: var(--ink);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  cursor: pointer;
 }
 
-.google-btn img {
-  width: 20px;
-  margin-right: 8px;
+.google-btn:hover:not(:disabled) {
+  background: var(--linen);
 }
 
-.google-btn:hover {
-  opacity: 0.9;
-  background-color: #3a3535;
-  transform: scale(1.05);
-  transition: all 0.3s;
-}
-
-/* Forgot Password Link */
-.forgot-password a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: bold;
-  transition: color 0.3s;
-}
-
-.forgot-password a:hover {
-  color: #d9d9d9;
-  text-decoration: underline;
-}
-
-/* Don't have an account section */
-.signup-bottom {
+.auth-switch {
+  margin: 1.5rem 0 0;
   text-align: center;
-  margin-top: 18px;
-  color: #ffffff;
-  font-size: 1rem;
+  font-size: 0.92rem;
 }
 
-.signup-bottom a {
-  color: #0602ff8e;
-  font-weight: bold;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-.signup-bottom a:hover {
-  color: #d9d9d9;
-  text-decoration: underline;
+@media (max-width: 420px) {
+  .auth-card {
+    padding: 1.75rem 1.25rem;
+  }
 }
